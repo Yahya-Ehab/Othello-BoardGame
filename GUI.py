@@ -9,12 +9,13 @@ pygame.init()
 WIDTHHEIGHT = 600
 screen = pygame.display.set_mode((WIDTHHEIGHT, WIDTHHEIGHT))
 pygame.display.set_caption("Othello")
+
+
 # Set up the tiles
 empty_tile_unscaled = pygame.image.load("./Images/Tile.bmp")
 black_tile_unscaled = pygame.image.load("./Images/Black Tile.bmp")
 white_tile_unscaled = pygame.image.load("./Images/White Tile.bmp")
 open_tile_unscaled = pygame.image.load("./Images/Open Tile.bmp")
-# Scale tiles to be 50 x 50
 tilesize = int(WIDTHHEIGHT / 8)
 empty_tile = pygame.transform.scale(empty_tile_unscaled, (tilesize, tilesize))
 black_tile = pygame.transform.scale(black_tile_unscaled, (tilesize, tilesize))
@@ -55,7 +56,4 @@ while running:
     
     screen.fill((255, 255, 255))
     draw_board(board)
-
-    # Draw 8x8 grid of empty tiles that are properly sized
-    
     pygame.display.flip()
