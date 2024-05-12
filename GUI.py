@@ -1,6 +1,7 @@
 # Implement the pygame GUI for the application
 import pygame
 from src.Board import Board
+from src.Othello import Othello
 from pygame.locals import *
 
 pygame.init()
@@ -32,6 +33,7 @@ hover_white_tile = pygame.transform.scale(hover_white_tile_unscaled, (tile_size,
 hover_black_tile = pygame.transform.scale(hover_black_tile_unscaled, (tile_size, tile_size))
 hover_open_tile = pygame.transform.scale(hover_open_tile_unscaled, (tile_size, tile_size))
 board = Board().board
+othello = Othello()
 
 # Piece sound
 move_sound = pygame.mixer.Sound("Sounds/Piece_Sound.wav")
@@ -69,29 +71,6 @@ def draw_board(boardc):
     pygame.display.flip()
 
 
-# This detects all the valid moves you can make based on your turn
-def detect_valid_moves(turn, board):
-    # This clears all the previously assigned valid moves so we can detect new ones
-    for i in range(8):
-        for j in range(8):
-            if board[i][j] == 3:
-                    board[i][j] = 0
-    
-    # This detects the valid moves and assigns them (Must be in a straight line)
-    reverse_turn = 2 if turn == 1 else 1
-    for i in range(8):
-        for j in range(8):
-            if board[i][j] == reverse_turn:
-                if i < 7 and board[i + 1][j] == 0 and board[i - 1][j] == turn: # Check down
-                    board[i + 1][j] = 3
-                if j < 7 and board[i][j + 1] == 0 and board[i][j - 1] == turn: # Check right
-                    board[i][j + 1] = 3
-                if i > 0 and board[i - 1][j] == 0 and board[i + 1][j] == turn: # Check up
-                    board[i - 1][j] = 3
-                if j > 0 and board[i][j - 1] == 0 and board[i][j + 1] == turn: # Check left
-                    board[i][j - 1] = 3
-
-
 screen.fill((255, 255, 255))
 running = True
 turn = 1
@@ -99,7 +78,7 @@ turn = 1
 # Main loop
 while running:
     for event in pygame.event.get():
-        detect_valid_moves(turn, board)
+        othello.detect_valid_moves(board, turn)
         draw_board(board)
 
         pos = pygame.mouse.get_pos()
