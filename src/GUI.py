@@ -6,8 +6,8 @@ from pygame.locals import *
 pygame.init()
 
 # Set up the window
-WIDTHHEIGHT = 800
-screen = pygame.display.set_mode((WIDTHHEIGHT, WIDTHHEIGHT))
+WINDOW_SIZE = 800
+screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE))
 pygame.display.set_caption("Othello")
 
 
@@ -17,7 +17,7 @@ black_tile_unscaled = pygame.image.load("./Images/Black Tile.bmp")
 white_tile_unscaled = pygame.image.load("./Images/White Tile.bmp")
 open_tile_unscaled = pygame.image.load("./Images/Open Tile.bmp")
 hover_tile_unscaled = pygame.image.load("./Images/Hover Tile.bmp")
-tile_size = int(WIDTHHEIGHT / 8)
+tile_size = int(WINDOW_SIZE / 8)
 empty_tile = pygame.transform.scale(empty_tile_unscaled, (tile_size, tile_size))
 black_tile = pygame.transform.scale(black_tile_unscaled, (tile_size, tile_size))
 white_tile = pygame.transform.scale(white_tile_unscaled, (tile_size, tile_size))
