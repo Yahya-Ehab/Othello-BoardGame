@@ -45,12 +45,14 @@ def draw_board(boardc):
 
     for i in range(8):
         for j in range(8):
+            # For hover
             if i == x and j == y and board[i][j] == 0:
                 screen.blit(hover_tile, (i * tile_size, j * tile_size))
             elif i == x and j == y and board[i][j] == 1:
                 screen.blit(hover_black_tile, (i * tile_size, j * tile_size))
             elif i == x and j == y and board[i][j] == 2:
                 screen.blit(hover_white_tile, (i * tile_size, j * tile_size))
+            # For normal tiles
             elif board[i][j] == 0:
                 screen.blit(empty_tile, (i * tile_size, j * tile_size))
             elif board[i][j] == 1:
