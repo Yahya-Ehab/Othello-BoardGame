@@ -34,9 +34,19 @@ board = Board()
 # For updating the board sprites
 def draw_board(boardc):
     board = boardc.board
+    pos = pygame.mouse.get_pos()
+    x = pos[0] // tile_size
+    y = pos[1] // tile_size
+
     for i in range(8):
         for j in range(8):
-            if board[i][j] == 0:
+            if i == x and j == y and board[i][j] == 0:
+                screen.blit(hover_tile, (i * tile_size, j * tile_size))
+            elif i == x and j == y and board[i][j] == 1:
+                screen.blit(hover_white_tile, (i * tile_size, j * tile_size))
+            elif i == x and j == y and board[i][j] == 2:
+                screen.blit(hover_black_tile, (i * tile_size, j * tile_size))
+            elif board[i][j] == 0:
                 screen.blit(empty_tile, (i * tile_size, j * tile_size))
             elif board[i][j] == 1:
                 screen.blit(white_tile, (i * tile_size, j * tile_size))
@@ -47,29 +57,20 @@ def draw_board(boardc):
 screen.fill((255, 255, 255))
 running = True
 
-
 # Main loop
 while running:
     for event in pygame.event.get():
         draw_board(board)
-        pos = pygame.mouse.get_pos()
-        x = pos[0] // tile_size
-        y = pos[1] // tile_size
-        
-        # To use the hover sprite 
-        if board.board[x][y] == 0:
-            screen.blit(hover_tile, (x * tile_size, y * tile_size))
-        if board.board[x][y] == 1:
-            screen.blit(hover_white_tile, (x * tile_size, y * tile_size))
-        if board.board[x][y] == 2:
-            screen.blit(hover_black_tile, (x * tile_size, y * tile_size))
-        
+
         # Closing the game
         if event.type == pygame.QUIT:
             running = False
         
         # Printing current tile location
         if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            x = pos[0] // tile_size
+            y = pos[1] // tile_size
             print(x, y)
             
     pygame.display.flip()
