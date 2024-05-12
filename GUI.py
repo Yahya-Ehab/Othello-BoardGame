@@ -1,8 +1,6 @@
-# Implement the pygame GUI for the application
 import pygame
 from src.Board import Board
 from src.Othello import Othello
-from pygame.locals import *
 
 pygame.init()
 pygame.mixer.init()
@@ -11,6 +9,10 @@ pygame.mixer.init()
 WINDOW_SIZE = 800
 screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE))
 pygame.display.set_caption("Othello")
+
+background_image = pygame.image.load("Images/bg.jpeg").convert()
+# background_image = pygame.transform.scale(background_image, (800, 800))
+
 
 # Load tile sprites
 empty_tile_unscaled = pygame.image.load("Images/Empty Tile.png")
@@ -41,8 +43,8 @@ move_sound = pygame.mixer.Sound("Sounds/Piece_Sound.wav")
 
 # NOTE: the (x, y) points are reversed in pygame, where (x) is columns and (y) is rows
 # For updating the board sprites
-def draw_board(boardc):
-    board = boardc
+def draw_board(grid):
+    board = grid
     pos = pygame.mouse.get_pos()
     x = pos[0] // tile_size
     y = pos[1] // tile_size
@@ -58,7 +60,7 @@ def draw_board(boardc):
                 screen.blit(hover_white_tile, (i * tile_size, j * tile_size))
             elif i == x and j == y and board[i][j] == 3:
                 screen.blit(hover_open_tile, (i * tile_size, j * tile_size))
-            
+
             # For normal tiles
             elif board[i][j] == 0:
                 screen.blit(empty_tile, (i * tile_size, j * tile_size))
@@ -71,34 +73,87 @@ def draw_board(boardc):
     pygame.display.flip()
 
 
-screen.fill((255, 255, 255))
-running = True
-turn = 1
+# Function to draw the main menu
+def draw_menu():
+    screen.blit(background_image, (0, 0))
+    font = pygame.font.Font(None, 38)
+    pvp_text = font.render("Player vs Player", True, (255, 255, 255))
+    pvc_text = font.render("Player vs Computer", True,(255, 255, 255))
+    screen.blit(pvp_text, (400, 500))
+    screen.blit(pvc_text, (400, 600))
+
+
+# Function to draw the difficulty selection menu
+def draw_difficulty_menu():
+    screen.blit(background_image, (0, 0))
+    font = pygame.font.Font(None, 36)
+    easy_text = font.render("Easy", True, (255, 255, 255))
+    medium_text = font.render("Medium", True, (255, 255, 255))
+    hard_text = font.render("Hard", True, (255, 255, 255))
+    screen.blit(easy_text, (400, 500))
+    screen.blit(medium_text, (400, 600))
+    screen.blit(hard_text, (400, 700))
 
 # Main loop
+running = True
+current_mode = None
+current_difficulty = None
+turn = 1
+
 while running:
     for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            x = pos[0]
+            y = pos[1]
+
+            if current_mode is None:
+                # Check if the click was in the menu area
+                if 400 < pos[0] < 600 and 500 < pos[1] < 550:
+                    current_mode = "PvP"
+                elif 400 < pos[0] < 600 < pos[1] < 650:
+                    current_mode = "PvC"
+            elif current_mode == "PvC" and current_difficulty is None:
+                # Check if the click was in the difficulty menu area
+                if 400 < pos[0] < 500 < pos[1] < 550:
+                    current_difficulty = "Easy"
+                elif 400 < pos[0] < 550 and 600 < pos[1] < 650:
+                    current_difficulty = "Medium"
+                elif 400 < pos[0] < 500 and 700 < pos[1] < 750:
+                    current_difficulty = "Hard"
+
+            if current_mode == "PvP" or (current_mode == "PvC" and current_difficulty):
+                othello.detect_valid_moves(board, turn)
+                draw_board(board)
+                pos = pygame.mouse.get_pos()
+
+                x = pos[0] // tile_size
+                y = pos[1] // tile_size
+
+                if board[x][y] == 3:
+                    # Adding new pieces
+                    if turn == 1:
+                        board[x][y] = 1
+                        turn = 2
+                    elif turn == 2:
+                        board[x][y] = 2
+                        turn = 1
+
+                    move_sound.play()
+                    print(x, y)
+
+    # Depending on the current mode, draw the appropriate menu or the game board
+    if current_mode is None:
+        draw_menu()
+    elif current_mode == "PvC" and current_difficulty is None:
+        draw_difficulty_menu()
+    else:
         othello.detect_valid_moves(board, turn)
         draw_board(board)
 
-        pos = pygame.mouse.get_pos()
-        x = pos[0] // tile_size
-        y = pos[1] // tile_size
-
-        # Closing the game
-        if event.type == pygame.QUIT:
-            running = False
-            
-        if event.type == pygame.MOUSEBUTTONDOWN and board[x][y] == 3:
-            # Adding new pieces
-            if turn == 1:
-                board[x][y] = 1
-                turn = 2
-            elif turn == 2:
-                board[x][y] = 2
-                turn = 1
-                
-            move_sound.play()
-            print(x, y)
-            
     pygame.display.flip()
+
+pygame.quit()
