@@ -19,6 +19,7 @@ open_tile_unscaled = pygame.image.load("./Images/Open Tile.bmp")
 hover_tile_unscaled = pygame.image.load("./Images/Hover Tile.bmp")
 hover_white_tile_unscaled = pygame.image.load("./Images/Hover White Tile.bmp")
 hover_black_tile_unscaled = pygame.image.load("./Images/Hover Black Tile.bmp")
+
 tile_size = int(WINDOW_SIZE / 8)
 empty_tile = pygame.transform.scale(empty_tile_unscaled, (tile_size, tile_size))
 black_tile = pygame.transform.scale(black_tile_unscaled, (tile_size, tile_size))
@@ -46,6 +47,7 @@ def draw_board(boardc):
 screen.fill((255, 255, 255))
 running = True
 
+
 # Main loop
 while running:
     for event in pygame.event.get():
@@ -70,5 +72,4 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             print(x, y)
             
-    
     pygame.display.flip()
