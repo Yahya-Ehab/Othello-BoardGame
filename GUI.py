@@ -1,6 +1,6 @@
 # Implement the pygame GUI for the application
 import pygame
-from Board import Board
+from src.Board import Board
 from pygame.locals import *
 
 pygame.init()
@@ -12,13 +12,13 @@ pygame.display.set_caption("Othello")
 
 
 # Set up the tiles
-empty_tile_unscaled = pygame.image.load("./Images/Empty Tile.bmp")
-black_tile_unscaled = pygame.image.load("./Images/Black Tile.bmp")
-white_tile_unscaled = pygame.image.load("./Images/White Tile.bmp")
-open_tile_unscaled = pygame.image.load("./Images/Open Tile.bmp")
-hover_tile_unscaled = pygame.image.load("./Images/Hover Tile.bmp")
-hover_white_tile_unscaled = pygame.image.load("./Images/Hover White Tile.bmp")
-hover_black_tile_unscaled = pygame.image.load("./Images/Hover Black Tile.bmp")
+empty_tile_unscaled = pygame.image.load("Images/Empty Tile.bmp")
+black_tile_unscaled = pygame.image.load("Images/Black Tile.bmp")
+white_tile_unscaled = pygame.image.load("Images/White Tile.bmp")
+open_tile_unscaled = pygame.image.load("Images/Open Tile.bmp")
+hover_tile_unscaled = pygame.image.load("Images/Hover Tile.bmp")
+hover_white_tile_unscaled = pygame.image.load("Images/Hover White Tile.bmp")
+hover_black_tile_unscaled = pygame.image.load("Images/Hover Black Tile.bmp")
 
 tile_size = int(WINDOW_SIZE / 8)
 empty_tile = pygame.transform.scale(empty_tile_unscaled, (tile_size, tile_size))
