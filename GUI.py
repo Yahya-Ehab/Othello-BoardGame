@@ -13,14 +13,14 @@ screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE))
 pygame.display.set_caption("Othello")
 
 # Load tile sprites
-empty_tile_unscaled = pygame.image.load("Images/Empty Tile.bmp")
-black_tile_unscaled = pygame.image.load("Images/Black Tile.bmp")
-white_tile_unscaled = pygame.image.load("Images/White Tile.bmp")
-open_tile_unscaled = pygame.image.load("Images/Open Tile.bmp")
-hover_tile_unscaled = pygame.image.load("Images/Hover Tile.bmp")
-hover_white_tile_unscaled = pygame.image.load("Images/Hover White Tile.bmp")
-hover_black_tile_unscaled = pygame.image.load("Images/Hover Black Tile.bmp")
-hover_open_tile_unscaled = pygame.image.load("Images/Hover Open Tile.bmp")
+empty_tile_unscaled = pygame.image.load("Images/Empty Tile.png")
+black_tile_unscaled = pygame.image.load("Images/Black Tile.png")
+white_tile_unscaled = pygame.image.load("Images/White Tile.png")
+open_tile_unscaled = pygame.image.load("Images/Open Tile.png")
+hover_tile_unscaled = pygame.image.load("Images/Hover Tile.png")
+hover_white_tile_unscaled = pygame.image.load("Images/Hover White Tile.png")
+hover_black_tile_unscaled = pygame.image.load("Images/Hover Black Tile.png")
+hover_open_tile_unscaled = pygame.image.load("Images/Hover Open Tile.png")
 
 # Setup tiles
 tile_size = int(WINDOW_SIZE / 8)
