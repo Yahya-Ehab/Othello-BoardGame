@@ -17,12 +17,12 @@ black_tile_unscaled = pygame.image.load("./Images/Black Tile.bmp")
 white_tile_unscaled = pygame.image.load("./Images/White Tile.bmp")
 open_tile_unscaled = pygame.image.load("./Images/Open Tile.bmp")
 hover_tile_unscaled = pygame.image.load("./Images/Hover Tile.bmp")
-tilesize = int(WIDTHHEIGHT / 8)
-empty_tile = pygame.transform.scale(empty_tile_unscaled, (tilesize, tilesize))
-black_tile = pygame.transform.scale(black_tile_unscaled, (tilesize, tilesize))
-white_tile = pygame.transform.scale(white_tile_unscaled, (tilesize, tilesize))
-open_tile = pygame.transform.scale(open_tile_unscaled, (tilesize, tilesize))
-hover_tile = pygame.transform.scale(hover_tile_unscaled, (tilesize, tilesize))
+tile_size = int(WIDTHHEIGHT / 8)
+empty_tile = pygame.transform.scale(empty_tile_unscaled, (tile_size, tile_size))
+black_tile = pygame.transform.scale(black_tile_unscaled, (tile_size, tile_size))
+white_tile = pygame.transform.scale(white_tile_unscaled, (tile_size, tile_size))
+open_tile = pygame.transform.scale(open_tile_unscaled, (tile_size, tile_size))
+hover_tile = pygame.transform.scale(hover_tile_unscaled, (tile_size, tile_size))
 board = Board()
 
 
@@ -31,11 +31,11 @@ def draw_board(boardc):
     for i in range(8):
         for j in range(8):
             if board[i][j] == 0:
-                screen.blit(empty_tile, (i * tilesize, j * tilesize))
+                screen.blit(empty_tile, (i * tile_size, j * tile_size))
             elif board[i][j] == 1:
-                screen.blit(white_tile, (i * tilesize, j * tilesize))
+                screen.blit(white_tile, (i * tile_size, j * tile_size))
             elif board[i][j] == 2:
-                screen.blit(black_tile, (i * tilesize, j * tilesize))
+                screen.blit(black_tile, (i * tile_size, j * tile_size))
     pygame.display.flip()
 
 running = True
@@ -47,8 +47,8 @@ while running:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
-            x = pos[0] // tilesize
-            y = pos[1] // tilesize
+            x = pos[0] // tile_size
+            y = pos[1] // tile_size
 
             print(x, y)
             
