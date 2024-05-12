@@ -6,21 +6,23 @@ from pygame.locals import *
 pygame.init()
 
 # Set up the window
-WIDTHHEIGHT = 600
+WIDTHHEIGHT = 800
 screen = pygame.display.set_mode((WIDTHHEIGHT, WIDTHHEIGHT))
 pygame.display.set_caption("Othello")
 
 
 # Set up the tiles
-empty_tile_unscaled = pygame.image.load("./Images/Tile.bmp")
+empty_tile_unscaled = pygame.image.load("./Images/Empty Tile.bmp")
 black_tile_unscaled = pygame.image.load("./Images/Black Tile.bmp")
 white_tile_unscaled = pygame.image.load("./Images/White Tile.bmp")
 open_tile_unscaled = pygame.image.load("./Images/Open Tile.bmp")
+hover_tile_unscaled = pygame.image.load("./Images/Hover Tile.bmp")
 tilesize = int(WIDTHHEIGHT / 8)
 empty_tile = pygame.transform.scale(empty_tile_unscaled, (tilesize, tilesize))
 black_tile = pygame.transform.scale(black_tile_unscaled, (tilesize, tilesize))
 white_tile = pygame.transform.scale(white_tile_unscaled, (tilesize, tilesize))
 open_tile = pygame.transform.scale(open_tile_unscaled, (tilesize, tilesize))
+hover_tile = pygame.transform.scale(hover_tile_unscaled, (tilesize, tilesize))
 board = Board()
 
 
@@ -41,18 +43,15 @@ while running:
     for event in pygame.event.get():
 
         if event.type == pygame.QUIT:
-
             running = False
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-
             pos = pygame.mouse.get_pos()
-
             x = pos[0] // tilesize
-
             y = pos[1] // tilesize
 
             print(x, y)
+            
     
     screen.fill((255, 255, 255))
     draw_board(board)
