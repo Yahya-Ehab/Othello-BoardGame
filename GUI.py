@@ -19,6 +19,7 @@ open_tile_unscaled = pygame.image.load("Images/Open Tile.bmp")
 hover_tile_unscaled = pygame.image.load("Images/Hover Tile.bmp")
 hover_white_tile_unscaled = pygame.image.load("Images/Hover White Tile.bmp")
 hover_black_tile_unscaled = pygame.image.load("Images/Hover Black Tile.bmp")
+hover_open_tile_unscaled = pygame.image.load("Images/Hover Open Tile.bmp")
 
 # Setup tiles
 tile_size = int(WINDOW_SIZE / 8)
@@ -29,6 +30,7 @@ open_tile = pygame.transform.scale(open_tile_unscaled, (tile_size, tile_size))
 hover_tile = pygame.transform.scale(hover_tile_unscaled, (tile_size, tile_size))
 hover_white_tile = pygame.transform.scale(hover_white_tile_unscaled, (tile_size, tile_size))
 hover_black_tile = pygame.transform.scale(hover_black_tile_unscaled, (tile_size, tile_size))
+hover_open_tile = pygame.transform.scale(hover_open_tile_unscaled, (tile_size, tile_size))
 board = Board().board
 
 # Piece sound
@@ -52,6 +54,9 @@ def draw_board(boardc):
                 screen.blit(hover_black_tile, (i * tile_size, j * tile_size))
             elif i == x and j == y and board[i][j] == 2:
                 screen.blit(hover_white_tile, (i * tile_size, j * tile_size))
+            elif i == x and j == y and board[i][j] == 3:
+                screen.blit(hover_open_tile, (i * tile_size, j * tile_size))
+            
             # For normal tiles
             elif board[i][j] == 0:
                 screen.blit(empty_tile, (i * tile_size, j * tile_size))
