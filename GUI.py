@@ -99,7 +99,9 @@ running = True
 current_mode = None
 current_difficulty = None
 turn = 1
-
+depth = None
+black_score = 2
+white_score = 2
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -120,10 +122,13 @@ while running:
                 # Check if the click was in the difficulty menu area
                 if 400 < pos[0] < 500 < pos[1] < 550:
                     current_difficulty = "Easy"
+                    depth = 3
                 elif 400 < pos[0] < 550 and 600 < pos[1] < 650:
                     current_difficulty = "Medium"
+                    depth = 4
                 elif 400 < pos[0] < 500 and 700 < pos[1] < 750:
                     current_difficulty = "Hard"
+                    depth = 5
 
             if current_mode == "PvP" or (current_mode == "PvC" and current_difficulty):
                 othello.detect_valid_moves(board, turn)
@@ -139,11 +144,30 @@ while running:
                         board[x][y] = 1
                         turn = 2
                     elif turn == 2:
-                        board[x][y] = 2
+                        if current_mode == "PvC":
+                            # If it's the computer's turn in PvC mode, let the computer make a move
+                            best_move, _ = othello.computerDifficulty(board, depth, 2)
+                            if best_move:
+                                x, y = best_move
+                                board[x][y] = 2
+                        else:
+                            board[x][y] = 2
                         turn = 1
+                        # Update scores
+                    white_score, black_score = othello.update_score(board)
+
+                    # Check for game end
+                    if black_score + white_score == 64:
+                        if black_score > white_score:
+                            pass
+                        elif white_score > black_score:
+                            pass
+                        else:
+                            pass
 
                     move_sound.play()
                     print(x, y)
+                    print("score :", white_score, black_score)  # to test the score
 
     # Depending on the current mode, draw the appropriate menu or the game board
     if current_mode is None:
