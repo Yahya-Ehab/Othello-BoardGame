@@ -27,15 +27,23 @@ class Othello:
     
     
     
-    # This is to update the board pieces when making a move
-    # It keeps recursively calling the pieces around us to check if they lead to a piece of the same color
-    # If not it returns false, this also happens when first calling it only
-    # On any sequential calls, one direction is only chosen for the call after to prevent unnecessary loops and incorrect piece changing
-    # FIXME: Unfortunately, this updates till it sees the first piece with the same color, meaning if we have (O X O X O) its gonna be only be (O O O X O) meaning one piece wont be changed
-    def change_pieces(self, board, turn, x, y, direction, start):
- 
-        # It works first by making sure we're not checking the start piece
-        # After that it checks if the piece we're on is the same color as our piece
+    # This is to update the board pieces when making a move, it works by iterating over the dictionary of moves and trying each one if we're still at the start.
+    # Otherwise it just uses the direction given to it, it uses recursion to call itself, and iteration to go through the directions, this makes the code much shorter than what we had
+    def improved_update_pieces(self, board, turn, x, y, direction, start):
+        
+        # We define all the directions we can go and their dx, dy
+        directions = {
+            "left": (-1, 0),
+            "right": (1, 0),
+            "up": (0, -1),
+            "down": (0, 1),
+            "up-left": (-1, -1),
+            "up-right": (1, -1),
+            "down-left": (-1, 1),
+            "down-right": (1, 1)
+        }
+        
+        # Making sure we're not checking the start piece then, checks if the piece we're on is the same color as our piece
         if board[x][y] == turn and not start:
             return True
         
@@ -43,61 +51,20 @@ class Othello:
         if board[x][y] in [0, 3]:
             return False
 
-        # This is to check the piece on our right
-        if x < 7 and (direction == "right" or start):
-            if(self.change_pieces(board, turn, x + 1, y, "right", start = False)):
-                board[x][y] = turn
+        # If we find a piece with similar color on any direction, we return true and change its color
+        # Otherwise we try another direction
+        for dir, (dx, dy) in directions.items():
+            if (dir == direction or start) and 0 <= x + dx < 8 and 0 <= y + dy < 8:
+                if self.improved_update_pieces(board, turn, x + dx, y + dy, dir, start = False):
+                    board[x][y] = turn
+                    
+                    # If we're not at the start, we return true, otherwise we return nothing to allow it to check other directions
+                    if not start:
+                        return True
                 
-                # This stupid part is to allow it to check all directions on start and stop it from return and not checking the other directions
-                # TODO: Optimize this crap
-                if not start:
-                    return True
-                else:
-                    pass
-            else:
-                if not start:
-                    return False
-                else:
-                    pass
+                # Else if we get false, we check if we're not at the start before returning it, to allow it to also check other directions
+                elif not start:
+                        return False
         
-        # This is to check the piece below us
-        if y < 7 and (direction == "down" or start):
-            if(self.change_pieces(board, turn, x, y + 1, "down", start = False)):
-                board[x][y] = turn
-                if not start:
-                    return True
-                else:
-                    pass
-            else:
-                if not start:
-                    return False
-                else:
-                    pass
-        
-        # This is to check the piece above us
-        if y > 0 and (direction == "up" or start):
-            if(self.change_pieces(board, turn, x, y - 1, "up", start = False)):
-                board[x][y] = turn
-                if not start:
-                    return True
-                else:
-                    pass
-            else:
-                if not start:
-                    return False
-                else:
-                    pass
-        
-        # This is to check the piece on our left
-        if x > 0 and (direction == "left" or start):
-            if(self.change_pieces(board, turn, x - 1, y, "left", start = False)):
-                board[x][y] = turn
-                if not start:
-                    return True
-                else:
-                    pass
-            else:
-                if not start:
-                    return False
-                else:
-                    pass
+        # If we're out of the boundaries, we return false                    
+        return False

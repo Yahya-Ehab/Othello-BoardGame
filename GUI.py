@@ -76,6 +76,8 @@ screen.fill((255, 255, 255))
 running = True
 turn = 1
 
+# TODO: When there are no moves to do, the game should skip the current player's turn
+
 # Main loop
 while running:
     for event in pygame.event.get():
@@ -99,7 +101,7 @@ while running:
             elif turn == 2:
                 board[x][y] = 2
             
-            othello.change_pieces(board, turn, x, y, "", True)
+            othello.improved_update_pieces(board, turn, x, y, "", True)
             move_sound.play()
             
             # Changing turns
