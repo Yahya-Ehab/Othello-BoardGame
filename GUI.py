@@ -94,6 +94,19 @@ def draw_difficulty_menu():
     screen.blit(medium_text, (400, 600))
     screen.blit(hard_text, (400, 700))
 
+
+def display_end_game_message(winner):
+    font = pygame.font.Font(None, 64)
+    if winner == 1:
+        text = font.render("Black wins!", True, (255, 255, 255))
+    elif winner == 2:
+        text = font.render("White wins!", True, (255, 255, 255))
+    else:
+        text = font.render("It's a draw!", True, (255, 255, 255))
+    text_rect = text.get_rect(center=(WINDOW_SIZE // 2, WINDOW_SIZE // 2))
+    screen.blit(text, text_rect)
+    pygame.display.flip()
+
 # Main loop
 running = True
 current_mode = None
@@ -102,6 +115,8 @@ turn = 1
 depth = None
 black_score = 2
 white_score = 2
+game_ended = False
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -156,14 +171,14 @@ while running:
                         # Update scores
                     white_score, black_score = othello.update_score(board)
 
-                    # Check for game end
                     if black_score + white_score == 64:
+                        game_ended = True
                         if black_score > white_score:
-                            pass
+                            display_end_game_message(1)
                         elif white_score > black_score:
-                            pass
+                            display_end_game_message(2)
                         else:
-                            pass
+                            display_end_game_message(0)
 
                     move_sound.play()
                     print(x, y)
@@ -175,8 +190,9 @@ while running:
     elif current_mode == "PvC" and current_difficulty is None:
         draw_difficulty_menu()
     else:
-        othello.detect_valid_moves(board, turn)
-        draw_board(board)
+        if not game_ended:  # Only draw the board if the game has not ended
+            othello.detect_valid_moves(board, turn)
+            draw_board(board)
 
     pygame.display.flip()
 
