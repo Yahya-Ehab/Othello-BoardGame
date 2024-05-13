@@ -11,19 +11,31 @@ class Othello:
                         board[i][j] = 0
         
         # This detects the valid moves and assigns them (Must be in a straight line)
+        # FIXME: Diagonals don't work 100% correct, so needs debugging
         reverse_turn = 2 if turn == 1 else 1
         for i in range(8):
             for j in range(8):
                 if board[i][j] == reverse_turn:
-                #    (In boundary)   (Block is empty)    (Opposite block is opposite color)
-                    if i < 7 and board[i + 1][j] == 0 and board[i - 1][j] == turn: # Check right
-                        board[i + 1][j] = 3
-                    if j < 7 and board[i][j + 1] == 0 and board[i][j - 1] == turn: # Check down
-                        board[i][j + 1] = 3
-                    if i > 0 and board[i - 1][j] == 0 and board[i + 1][j] == turn: # Check left
-                        board[i - 1][j] = 3
-                    if j > 0 and board[i][j - 1] == 0 and board[i][j + 1] == turn: # Check up
-                        board[i][j - 1] = 3
+                    #    (In boundary)
+                    if 0 < i < 7 and 0 < j < 7:
+                        #   (Block is empty)    (Opposite block is opposite color)
+                        if board[i + 1][j] == 0 and board[i - 1][j] == turn: # Check right and opposite
+                            board[i + 1][j] = 3
+                        if board[i][j + 1] == 0 and board[i][j - 1] == turn: # Check down and opposite
+                            board[i][j + 1] = 3
+                        if board[i - 1][j] == 0 and board[i + 1][j] == turn: # Check left and opposite
+                            board[i - 1][j] = 3
+                        if board[i][j - 1] == 0 and board[i][j + 1] == turn: # Check up and opposite
+                            board[i][j - 1] = 3
+                            
+                        if board[i + 1][j - 1] == 0 and board[i - 1][j + 1] == turn: # Check up-right and opposite
+                            board[i + 1][j - 1] = 3
+                        if board[i - 1][j - 1] == 0 and board[i + 1][j + 1] == turn: # Check up-left and opposite
+                            board[i - 1][j - 1] = 3
+                        if board[i + 1][j + 1] == 0 and board[i - 1][j - 1] == turn: # Check down-right and opposite
+                            board[i + 1][j + 1] = 3
+                        if board[i - 1][j + 1] == 0 and board[i + 1][j + 1] == turn: # Check down-left and opposite
+                            board[i - 1][j + 1] = 3
     
     
     

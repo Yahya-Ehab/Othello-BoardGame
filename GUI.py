@@ -21,6 +21,8 @@ hover_tile_unscaled = pygame.image.load("Images/Hover Tile.png")
 hover_white_tile_unscaled = pygame.image.load("Images/Hover White Tile.png")
 hover_black_tile_unscaled = pygame.image.load("Images/Hover Black Tile.png")
 hover_open_tile_unscaled = pygame.image.load("Images/Hover Open Tile.png")
+paused_white_tile_unscaled = pygame.image.load("Images/Paused White Tile.png")
+paused_black_tile_unscaled = pygame.image.load("Images/Paused Black Tile.png")
 
 # Setup tiles
 tile_size = int(WINDOW_SIZE / 8)
@@ -32,6 +34,8 @@ hover_tile = pygame.transform.scale(hover_tile_unscaled, (tile_size, tile_size))
 hover_white_tile = pygame.transform.scale(hover_white_tile_unscaled, (tile_size, tile_size))
 hover_black_tile = pygame.transform.scale(hover_black_tile_unscaled, (tile_size, tile_size))
 hover_open_tile = pygame.transform.scale(hover_open_tile_unscaled, (tile_size, tile_size))
+paused_white_tile = pygame.transform.scale(paused_white_tile_unscaled, (tile_size, tile_size))
+paused_black_tile = pygame.transform.scale(paused_black_tile_unscaled, (tile_size, tile_size))
 board = Board().board
 othello = Othello()
 
@@ -76,22 +80,48 @@ screen.fill((255, 255, 255))
 running = True
 turn = 1
 
-# TODO: When there are no moves to do, the game should skip the current player's turn
+def skip_turn(board, x, y):
+    
+    for i in range(8):
+        for j in range(8):
+            if board[i][j] == 3:
+                return False
+
+    if board[x][y] == 1:
+        screen.blit(paused_black_tile, (x * tile_size, y * tile_size))
+        pygame.display.update()
+        pygame.time.delay(2000)
+        screen.blit(black_tile, (x * tile_size, y * tile_size))
+    elif board[x][y] == 2:
+        screen.blit(paused_white_tile, (x * tile_size, y * tile_size))
+        pygame.display.update()
+        pygame.time.delay(2000)
+        screen.blit(white_tile, (x * tile_size, y * tile_size))
+    
+    return True
+
+prevX = -1
+prevY = -1
 
 # Main loop
 while running:
     for event in pygame.event.get():
+        
+        # Closing the game
+        if event.type == pygame.QUIT:
+            running = False
+            
         othello.detect_valid_moves(board, turn)
         draw_board(board)
+
+        if prevX != -1 and prevY != -1 and skip_turn(board, x, y):
+            turn = 2 if turn == 1 else 1
+            pass
 
         pos = pygame.mouse.get_pos()
         x = pos[0] // tile_size
         y = pos[1] // tile_size
 
-        # Closing the game
-        if event.type == pygame.QUIT:
-            running = False
-            
         # If you press on an open tile
         if event.type == pygame.MOUSEBUTTONDOWN and board[x][y] == 3:
             
@@ -100,6 +130,9 @@ while running:
                 board[x][y] = 1
             elif turn == 2:
                 board[x][y] = 2
+            
+            prevX = x
+            prevY = y
             
             othello.improved_update_pieces(board, turn, x, y, "", True)
             move_sound.play()
