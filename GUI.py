@@ -40,6 +40,8 @@ move_sound = pygame.mixer.Sound("Sounds/Piece_Sound.wav")
 
 
 # NOTE: the (x, y) points are reversed in pygame, where (x) is columns and (y) is rows
+# x increases going right
+# y increases going down
 # For updating the board sprites
 def draw_board(boardc):
     board = boardc
@@ -68,7 +70,6 @@ def draw_board(boardc):
                 screen.blit(white_tile, (i * tile_size, j * tile_size))
             elif board[i][j] == 3:
                 screen.blit(open_tile, (i * tile_size, j * tile_size))
-    pygame.display.flip()
 
 
 screen.fill((255, 255, 255))
@@ -89,16 +90,20 @@ while running:
         if event.type == pygame.QUIT:
             running = False
             
+        # If you press on an open tile
         if event.type == pygame.MOUSEBUTTONDOWN and board[x][y] == 3:
-            # Adding new pieces
+            
+            # Update pieces on the grid
             if turn == 1:
                 board[x][y] = 1
-                turn = 2
             elif turn == 2:
                 board[x][y] = 2
-                turn = 1
-                
-            move_sound.play()
-            print(x, y)
             
-    pygame.display.flip()
+            othello.change_pieces(board, turn, x, y, "", True)
+            move_sound.play()
+            
+            # Changing turns
+            turn = 2 if turn == 1 else 1
+    
+    # Changed from .flip because it flipped the board
+    pygame.display.update()
