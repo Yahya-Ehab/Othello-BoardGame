@@ -326,13 +326,15 @@ while running:
 
             elif turn == 2:
                 pygame.time.delay(1000)  # Delay
-                best_move, _ = othello.computer_turn(board, depth, -float('inf'), float('inf'), 2)
+                best_move, _ = othello.computer_turn(board, depth, -64, 64, 2)
                 if best_move:
                     x, y = best_move
                     board[x][y] = 2
                     white_turns += 1
+                    played = True
+                else:
+                    print("NO BEST MOVE\n\n\n")
 
-                played = True
 
             if played:
                 

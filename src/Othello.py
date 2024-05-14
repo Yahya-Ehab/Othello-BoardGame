@@ -107,18 +107,18 @@ class Othello:
 
 
     # Simple evaluation function, just returns the difference between black and white scores
-    def evaluateBoard(self, grid, player):
-        white_score, black_score = self.update_score(grid)
+    def evaluateBoard(self, grid):
+        black_score, white_score = self.update_score(grid)
         return black_score - white_score
 
 
     def computer_turn(self, grid, depth, alpha, beta, player):
         def max_value(grid, depth, alpha, beta):
-            if depth == 0:
-                return self.evaluateBoard(grid, player)
+            if depth == 0 or len(self.get_valid_moves(grid)) == 0:
+                return self.evaluateBoard(grid)
 
-            max_val = -float('inf')
-            for move in self.get_valid_moves(grid, player):
+            max_val = -64
+            for move in self.get_valid_moves(grid):
                 new_grid = self.simulate_move(grid, move[0], move[1], player)
                 val = min_value(new_grid, depth - 1, alpha, beta)
                 max_val = max(max_val, val)
@@ -129,12 +129,12 @@ class Othello:
             return max_val
 
         def min_value(grid, depth, alpha, beta):
-            if depth == 0:
-                return self.evaluateBoard(grid, player)
+            if depth == 0 or len(self.get_valid_moves(grid)) == 0:
+                return self.evaluateBoard(grid)
 
-            min_val = float('inf')
+            min_val = 64
             opponent = 1 if player == 2 else 2
-            for move in self.get_valid_moves(grid, opponent):
+            for move in self.get_valid_moves(grid):
                 new_grid = self.simulate_move(grid, move[0], move[1], opponent)
                 val = max_value(new_grid, depth - 1, alpha, beta)
                 min_val = min(min_val, val)
@@ -144,8 +144,8 @@ class Othello:
             return min_val
 
         best_move = None
-        max_val = -float('inf')
-        for move in self.get_valid_moves(grid, player):
+        max_val = -64
+        for move in self.get_valid_moves(grid):
             new_grid = self.simulate_move(grid, move[0], move[1], player)
             val = min_value(new_grid, depth - 1, alpha, beta)
             if val > max_val:
@@ -154,9 +154,10 @@ class Othello:
                 alpha = max(alpha, max_val)
                 if beta <= alpha:
                     break  # Beta cut-off
+                
         return best_move, max_val
 
-    def get_valid_moves(self, grid, player):
+    def get_valid_moves(self, grid):
         valid_moves = []
         for i in range(8):
             for j in range(8):
