@@ -268,39 +268,37 @@ while running:
                 # Changing turns
                 turn = 2 if turn == 1 else 1
 
-
         if current_mode == "PvC" and current_difficulty:
             played = False
             othello.check_open_moves(board, turn)
             draw_board(board)
-            
+
             if not end_game(black_score, white_score):
                 if lastX != -1 and lastY != -1 and skip_turn(board, x, y):
                     turn = 2 if turn == 1 else 1
                     continue
-                
+
             # This is to prevent pressing on the button and putting a piece at the same time
             if first_play:
                 first_play = False
                 continue
-            
-            pos = pygame.mouse.get_pos()
-            x = pos[0] // tile_size
-            y = pos[1] // tile_size
 
             if turn == 1:
+                pos = pygame.mouse.get_pos()
+                x = pos[0] // tile_size
+                y = pos[1] // tile_size
                 if event.type == pygame.MOUSEBUTTONDOWN and board[x][y] == 3:
                     # Adding new pieces
                     board[x][y] = 1
                     played = True
 
             elif turn == 2:
-                # If it's the computer's turn in PvC mode, let the computer make a move
-                best_move, _ = othello.computer_turn(board, depth, 64, -64, 1)
+                pygame.time.delay(1000)  # Delay
+                best_move, _ = othello.computer_turn(board, depth, -float('inf'), float('inf'), 2)
                 if best_move:
                     x, y = best_move
                     board[x][y] = 2
-                
+
                 played = True
 
             if played:

@@ -110,134 +110,58 @@ class Othello:
         return black_score - white_score
 
     def computer_turn(self, grid, depth, alpha, beta, player):
-        new_board = copy.deepcopy(grid)
-        available_moves = self.find_available_moves(new_board, player)
+        def max_value(grid, depth, alpha, beta):
+            if depth == 0:
+                return self.evaluateBoard(grid, player)
 
-        if depth == 0 or len(available_moves) == 0:
-            score = self.evaluateBoard(grid, player)
-            return None, score  # Return score without a move
+            max_val = -float('inf')
+            for move in self.get_valid_moves(grid, player):
+                new_grid = self.simulate_move(grid, move[0], move[1], player)
+                val = min_value(new_grid, depth - 1, alpha, beta)
+                max_val = max(max_val, val)
+                alpha = max(alpha, max_val)
+                if beta <= alpha:
+                    break  # Beta cut-off
+            return max_val
+
+        def min_value(grid, depth, alpha, beta):
+            if depth == 0:
+                return self.evaluateBoard(grid, player)
+
+            min_val = float('inf')
+            opponent = 1 if player == 2 else 2
+            for move in self.get_valid_moves(grid, opponent):
+                new_grid = self.simulate_move(grid, move[0], move[1], opponent)
+                val = max_value(new_grid, depth - 1, alpha, beta)
+                min_val = min(min_val, val)
+                beta = min(beta, min_val)
+                if beta <= alpha:
+                    break  # Alpha cut-off
+            return min_val
 
         best_move = None
-        best_score = float('-inf') if player > 0 else float('inf')
+        max_val = -float('inf')
+        for move in self.get_valid_moves(grid, player):
+            new_grid = self.simulate_move(grid, move[0], move[1], player)
+            val = min_value(new_grid, depth - 1, alpha, beta)
+            if val > max_val:
+                max_val = val
+                best_move = move
+                alpha = max(alpha, max_val)
+                if beta <= alpha:
+                    break  # Beta cut-off
+        return best_move, max_val
 
-        for move in available_moves:
-            x, y = move
-            swappable_tiles = self.swap_tiles(x, y, new_board, player)
-            new_board[x][y] = player
-            for tile in swappable_tiles:
-                new_board[tile[0]][tile[1]] = player
+    def get_valid_moves(self, grid, player):
+        valid_moves = []
+        for i in range(8):
+            for j in range(8):
+                if grid[i][j] == 3:
+                    valid_moves.append((i, j))
+        return valid_moves
 
-            if player == 1:
-                next_player = 2
-            else:
-                next_player = 1
-
-            _, value = self.computer_turn(new_board, depth - 1, alpha, beta, next_player)
-
-            if player > 0:
-                if value > best_score:
-                    best_score = value
-                    best_move = move
-                    alpha = max(alpha, best_score)
-                    if beta <= alpha:
-                        break
-            else:
-                if value < best_score:
-                    best_score = value
-                    best_move = move
-                    beta = min(beta, best_score)
-                    if beta <= alpha:
-                        break
-
-            new_board = copy.deepcopy(grid)  # Reset the board
-
-        return best_move, best_score
-
-    def swap_tiles(self, x, y, grid, player):
-        surround_cells = directions(x, y)
-        if len(surround_cells) == 0:
-            return []
-
-        swappable_tiles = []
-        for checkCell in surround_cells:
-            c_x, c_y = checkCell
-            difX, difY = c_x - x, c_y - y
-            currentLine = []
-
-            flag = True
-            while flag:
-                if grid[c_x][c_y] == player * -1:
-                    currentLine.append((c_x, c_y))
-                elif grid[c_x][c_y] == player:
-                    flag = False
-                    break
-                elif grid[c_x][c_y] == 0:
-                    currentLine.clear()
-                    flag = False
-                c_x += difX
-                c_y += difY
-
-                if c_x < 0 or c_x > 7 or c_y < 0 or c_y > 7:
-                    currentLine.clear()
-                    flag = False
-
-            if len(currentLine) > 0:
-                swappable_tiles.extend(currentLine)
-
-        return swappable_tiles
-
-    def find_available_moves(self, grid, player):
-        """Takes the list of validCells and checks each to see if playable"""
-        valid = self.find_valid_cells(grid, player)
-        playable = []
-
-        for cell in valid:
-            x, y = cell
-            if cell in playable:
-                continue
-            s_tiles = self.swap_tiles(x, y, grid, player)
-
-            #if len(swapTiles) > 0 and cell not in playableCells:
-            if len(s_tiles) > 0:
-                playable.append(cell)
-
-        return playable
-
-    def find_valid_cells(self, grid, playrer):
-        """Performs a check to find all empty cells that are adjacent to opposing player"""
-        valid = []
-        for gridX, row in enumerate(grid):
-            for gridY, col in enumerate(row):
-                if grid[gridX][gridY] != 0:
-                    continue
-                dir = directions(gridX, gridY)
-
-                for direction in dir:
-                    dirX, dirY = direction
-                    checkedCell = grid[dirX][dirY]
-
-                    if checkedCell == 0 or checkedCell == playrer:
-                        continue
-
-                    if (gridX, gridY) in valid:
-                        continue
-
-                    valid.append((gridX, gridY))
-        return valid
-
-def directions(x, y, mini_x=0, mini_y=0, maxi_x=7, maxi_y=7):
-    valid_directions = []
-    if x != mini_x: valid_directions.append((x - 1, y))
-    if x != mini_x and y != mini_y: valid_directions.append((x - 1, y - 1))
-    if x != mini_x and y != maxi_y: valid_directions.append((x - 1, y + 1))
-
-    if x != maxi_x: valid_directions.append((x + 1, y))
-    if x != maxi_x and y != mini_y: valid_directions.append((x + 1, y - 1))
-    if x != maxi_x and y != maxi_y: valid_directions.append((x + 1, y + 1))
-
-    if y != mini_y: valid_directions.append((x, y - 1))
-    if y != maxi_y: valid_directions.append((x, y + 1))
-
-    return valid_directions
-
-
+    def simulate_move(self, grid, x, y, player):
+        new_grid = [row[:] for row in grid]
+        new_grid[x][y] = player
+        self.update_pieces(new_grid, player, x, y, "", True)
+        return new_grid
