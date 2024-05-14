@@ -2,46 +2,65 @@ class Othello:
     def __init__(self) -> None:
         pass
     
-    # This detects all the valid moves you can make based on your turn
-    def detect_valid_moves(self, board, turn):
+    # This is what actually detects the valid moves and assigns them (Must be in a straight line)
+    def assign_open_moves(self, board, turn, x, y, found, direction, start):
+        reverse_turn = 2 if turn == 1 else 1
+        
+        # Define the valid directions
+        directions = {
+            "left": (-1, 0),
+            "right": (1, 0),
+            "up": (0, -1),
+            "down": (0, 1),
+            "up-left": (-1, -1),
+            "up-right": (1, -1),
+            "down-left": (-1, 1),
+            "down-right": (1, 1)
+        }
+        
+        # If its an empty tile and the piece before it is not yours, then we can put our piece after it
+        if board[x][y] == 0:
+            if found:
+                board[x][y] = 3
+            else:
+                return
+
+        # If its not our piece, then we change found to true to indicate that if we find an empty tile next, we can put our piece on it
+        if board[x][y] == reverse_turn:
+            found = True
+        
+        # Otherwise if its an open tile, we return, because we can do nothing 
+        if board[x][y] == 3 or (board[x][y] == turn and found):
+            return
+        
+        # This goes through each direction if we're on the starting piece, otherwise it goes through the direction given to it
+        for dir, (dx, dy) in directions.items():
+            # Check if direction is valid and new tile is within boundaries
+            if (dir == direction or start) and 0 <= dx + x <= 7 and 0 <= dy + y <= 7:
+                self.assign_open_moves(board, turn, x + dx, y + dy, found, dir, start= False)
+                
+        
+    
+    # This clears the board and checks which pieces it should check its open moves
+    def check_open_moves(self, board, turn):
+        
         # This clears all the previously assigned valid moves so we can detect new ones
         for i in range(8):
             for j in range(8):
                 if board[i][j] == 3:
                         board[i][j] = 0
         
-        # This detects the valid moves and assigns them (Must be in a straight line)
-        # FIXME: Diagonals don't work 100% correct, so needs debugging
-        reverse_turn = 2 if turn == 1 else 1
+        # This goes through the entire board and when it detects your piece, it calls the assign function
         for i in range(8):
             for j in range(8):
-                if board[i][j] == reverse_turn:
-                    #    (In boundary)
-                    if 0 < i < 7 and 0 < j < 7:
-                        #   (Block is empty)    (Opposite block is opposite color)
-                        if board[i + 1][j] == 0 and board[i - 1][j] == turn: # Check right and opposite
-                            board[i + 1][j] = 3
-                        if board[i][j + 1] == 0 and board[i][j - 1] == turn: # Check down and opposite
-                            board[i][j + 1] = 3
-                        if board[i - 1][j] == 0 and board[i + 1][j] == turn: # Check left and opposite
-                            board[i - 1][j] = 3
-                        if board[i][j - 1] == 0 and board[i][j + 1] == turn: # Check up and opposite
-                            board[i][j - 1] = 3
-                            
-                        if board[i + 1][j - 1] == 0 and board[i - 1][j + 1] == turn: # Check up-right and opposite
-                            board[i + 1][j - 1] = 3
-                        if board[i - 1][j - 1] == 0 and board[i + 1][j + 1] == turn: # Check up-left and opposite
-                            board[i - 1][j - 1] = 3
-                        if board[i + 1][j + 1] == 0 and board[i - 1][j - 1] == turn: # Check down-right and opposite
-                            board[i + 1][j + 1] = 3
-                        if board[i - 1][j + 1] == 0 and board[i + 1][j + 1] == turn: # Check down-left and opposite
-                            board[i - 1][j + 1] = 3
+                if board[i][j] == turn:
+                    self.assign_open_moves(board, turn, i, j, False, "", True)
     
     
     
     # This is to update the board pieces when making a move, it works by iterating over the dictionary of moves and trying each one if we're still at the start.
     # Otherwise it just uses the direction given to it, it uses recursion to call itself, and iteration to go through the directions, this makes the code much shorter than what we had
-    def improved_update_pieces(self, board, turn, x, y, direction, start):
+    def update_pieces(self, board, turn, x, y, direction, start):
         
         # We define all the directions we can go and their dx, dy
         directions = {
@@ -67,7 +86,7 @@ class Othello:
         # Otherwise we try another direction
         for dir, (dx, dy) in directions.items():
             if (dir == direction or start) and 0 <= x + dx < 8 and 0 <= y + dy < 8:
-                if self.improved_update_pieces(board, turn, x + dx, y + dy, dir, start = False):
+                if self.update_pieces(board, turn, x + dx, y + dy, dir, start = False):
                     board[x][y] = turn
                     
                     # If we're not at the start, we return true, otherwise we return nothing to allow it to check other directions

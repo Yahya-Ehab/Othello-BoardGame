@@ -75,11 +75,8 @@ def draw_board(boardc):
             elif board[i][j] == 3:
                 screen.blit(open_tile, (i * tile_size, j * tile_size))
 
-
-screen.fill((255, 255, 255))
-running = True
-turn = 1
-
+# This checks if there are available moves for the current player, otherwise it skips their turn
+# FIXME: this crashes the game at the end because there are no moves to be made, so we need an end screen
 def skip_turn(board, x, y):
     
     for i in range(8):
@@ -92,6 +89,7 @@ def skip_turn(board, x, y):
         pygame.display.update()
         pygame.time.delay(2000)
         screen.blit(black_tile, (x * tile_size, y * tile_size))
+        
     elif board[x][y] == 2:
         screen.blit(paused_white_tile, (x * tile_size, y * tile_size))
         pygame.display.update()
@@ -100,6 +98,9 @@ def skip_turn(board, x, y):
     
     return True
 
+screen.fill((255, 255, 255))
+running = True
+turn = 1
 prevX = -1
 prevY = -1
 
@@ -111,12 +112,12 @@ while running:
         if event.type == pygame.QUIT:
             running = False
             
-        othello.detect_valid_moves(board, turn)
+        othello.check_open_moves(board, turn)
         draw_board(board)
 
         if prevX != -1 and prevY != -1 and skip_turn(board, x, y):
             turn = 2 if turn == 1 else 1
-            pass
+            continue
 
         pos = pygame.mouse.get_pos()
         x = pos[0] // tile_size
@@ -134,7 +135,7 @@ while running:
             prevX = x
             prevY = y
             
-            othello.improved_update_pieces(board, turn, x, y, "", True)
+            othello.update_pieces(board, turn, x, y, "", True)
             move_sound.play()
             
             # Changing turns
