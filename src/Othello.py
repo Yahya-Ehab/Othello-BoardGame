@@ -1,6 +1,3 @@
-import copy
-
-
 class Othello:
     def __init__(self) -> None:
         pass
@@ -99,6 +96,7 @@ class Othello:
         # If we're out of the boundaries, we return false                    
         return False
 
+    # Updating scoreboard by counting pieces
     def update_score(self, grid):
         white_score = sum(row.count(1) for row in grid)
         black_score = sum(row.count(2) for row in grid)

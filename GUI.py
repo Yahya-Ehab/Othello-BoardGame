@@ -128,6 +128,11 @@ def skip_turn(board, x, y):
 # This is to prevent the crashing of the program at the end, till we implement a proper menu and game over screen
 def end_game(white_score, black_score):
     
+    for i in range(8):
+        for j in range(8):
+            if board[i][j] != 1 or board[i][j] != 2:
+                return True
+
     if white_score + black_score < 64:
         return False
     
