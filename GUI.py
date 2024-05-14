@@ -133,7 +133,7 @@ def skip_turn(board, x, y):
 
 
 # This is to prevent the crashing of the program at the end, till we implement a proper menu and game over screen
-def end_game(white_score, black_score):
+def end_game(black_score, white_score, black_turns, white_turns):
     
     white = False 
     black = False
@@ -148,7 +148,7 @@ def end_game(white_score, black_score):
 
     
     # To check if we can't make anymore moves
-    if white and black and white_score < 31 and black_score < 31 and white_score + black_score < 64:
+    if black and white and black_turns < 31 and white_turns < 31 and black_score + white_score < 64:
         return False
     
     winner_font = pygame.font.SysFont("microsoftsansserif", 64)
@@ -254,7 +254,7 @@ while running:
             othello.check_open_moves(board, turn)
             draw_board(board)
             
-            if not end_game(black_score, white_score, white_turns, black_turns):
+            if not end_game(black_score, white_score, black_turns, white_turns):
                 if lastX != -1 and lastY != -1 and skip_turn(board, x, y):
                     turn = 2 if turn == 1 else 1
                     continue
@@ -294,7 +294,7 @@ while running:
                 # Changing turns
                 turn = 2 if turn == 1 else 1
                 
-                print(f'White turns: {white_turns}, Black turns: {black_turns}')
+                print(f'Black turn: {black_turns}, White turns: {white_turns}')
 
 
         if current_mode == "PvC" and current_difficulty:
@@ -302,7 +302,7 @@ while running:
             othello.check_open_moves(board, turn)
             draw_board(board)
 
-            if not end_game(black_score, white_score):
+            if not end_game(black_score, white_score, black_turns, white_turns):
                 if lastX != -1 and lastY != -1 and skip_turn(board, x, y):
                     turn = 2 if turn == 1 else 1
                     continue
@@ -351,7 +351,7 @@ while running:
                 turn = 2 if turn == 1 else 1
 
                 print("score :", white_score, black_score)  # to test the score
-                print(f'White turns: {white_turns}, Black turns: {black_turns}')
+                print(f'Black turn: {black_turns}, White turns: {white_turns}')
                 
     # Changed from .flip because it flipped the board
     pygame.display.update()
