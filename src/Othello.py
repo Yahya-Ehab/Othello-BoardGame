@@ -100,3 +100,12 @@ class Othello:
         # If we're out of the boundaries, we return false                    
         return False
     
+    def update_score(self, grid):
+        white_score = sum(row.count(1) for row in grid)
+        black_score = sum(row.count(2) for row in grid)
+        return white_score, black_score
+
+    def evaluateBoard(self, grid, player):
+        # Simple evaluation function, just returns the difference between black and white scores
+        white_score, black_score = self.update_score(grid)
+        return black_score - white_score

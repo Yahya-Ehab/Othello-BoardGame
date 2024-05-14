@@ -1,6 +1,7 @@
 import pygame
 from src.Board import Board
 from src.Othello import Othello
+from src.AI import AI
 
 pygame.init()
 pygame.mixer.init()
@@ -51,6 +52,7 @@ hover_current_white_tile = pygame.transform.scale(hover_current_white_unscaled, 
 
 board = Board().board
 othello = Othello()
+ai = AI()
 
 # Piece sound
 move_sound = pygame.mixer.Sound("Sounds/Piece_Sound.wav")
@@ -229,6 +231,12 @@ while running:
         # Closing the game
         if event.type == pygame.QUIT:
             running = False
+            
+        # Depending on the current mode, draw the appropriate menu or the game board
+        if current_mode is None:
+            draw_menu()
+        elif current_mode == "PvC" and current_difficulty is None:
+            draw_difficulty_menu()
         
         if current_mode == None or current_mode == "PvC":
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -295,6 +303,10 @@ while running:
             othello.check_open_moves(board, turn)
             draw_board(board)
             
+            if first_play:
+                first_play = False
+                continue
+            
             pos = pygame.mouse.get_pos()
             x = pos[0] // tile_size
             y = pos[1] // tile_size
@@ -307,7 +319,7 @@ while running:
                 elif turn == 2:
                     if current_mode == "PvC":
                         # If it's the computer's turn in PvC mode, let the computer make a move
-                        best_move, _ = othello.computerDifficulty(board, depth, 2)
+                        best_move, _ = ai.computerDifficulty(board, depth, 2)
                         if best_move:
                             x, y = best_move
                             board[x][y] = 2
@@ -329,13 +341,7 @@ while running:
                 move_sound.play()
                 print(x, y)
                 print("score :", white_score, black_score)  # to test the score
-
-    # Depending on the current mode, draw the appropriate menu or the game board
-    if current_mode is None:
-        draw_menu()
-    elif current_mode == "PvC" and current_difficulty is None:
-        draw_difficulty_menu()
-            
+                
     # Changed from .flip because it flipped the board
     pygame.display.update()
 

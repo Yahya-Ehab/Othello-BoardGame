@@ -7,13 +7,7 @@ class AI:
     # AI FUNCTIONS
     def get_best_move(grid, depth, alpha, beta, player):
         pass
-
-
-    def update_score(self, grid):
-        white_score = sum(row.count(1) for row in grid)
-        black_score = sum(row.count(2) for row in grid)
-        return white_score, black_score
-
+    
     def computerDifficulty(self, grid, depth, player):
         def minimax(grid, depth, alpha, beta, maximizing_player):
             if depth == 0:
@@ -53,10 +47,6 @@ class AI:
 
         return minimax(grid, depth, float('-inf'), float('inf'), True)
 
-    def evaluateBoard(self, grid, player):
-        # Simple evaluation function, just returns the difference between black and white scores
-        white_score, black_score = self.update_score(grid)
-        return black_score - white_score
 
     def findAvailMoves(self, grid, player):
         moves = []
