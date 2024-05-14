@@ -124,6 +124,7 @@ def skip_turn(board, x, y):
     
     return True
 
+
 # This is to prevent the crashing of the program at the end, till we implement a proper menu and game over screen
 def game_over(board, white_score, black_score):
     for i in range(8):
@@ -157,7 +158,7 @@ def game_over(board, white_score, black_score):
 
 
 # Function to draw the main menu
-def draw_menu():
+def main_menu():
     screen.blit(background_image, (0, 0))
     font = pygame.font.Font(None, 38)
     pvp_text = font.render("Player vs Player", True, (255, 255, 255))
@@ -167,7 +168,7 @@ def draw_menu():
 
 
 # Function to draw the difficulty selection menu
-def draw_difficulty_menu():
+def difficulty_menu():
     screen.blit(background_image, (0, 0))
     font = pygame.font.Font(None, 36)
     easy_text = font.render("Easy", True, (255, 255, 255))
@@ -178,17 +179,16 @@ def draw_difficulty_menu():
     screen.blit(hard_text, (400, 700))
 
 
-# Main loop
-running = True
-current_mode = None
-current_difficulty = None
-first_play = True
 turn = 1
 depth = None
-black_score = 2
-white_score = 2
-game_ended = False
+running = True
+black_score = 0
+white_score = 0
+first_play = True
+current_mode = None
+current_difficulty = None
 
+# Main loop
 while running:
     for event in pygame.event.get():
         
@@ -198,9 +198,9 @@ while running:
             
         # Depending on the current mode, draw the appropriate menu or the game board
         if current_mode is None:
-            draw_menu()
+            main_menu()
         elif current_mode == "PvC" and current_difficulty is None:
-            draw_difficulty_menu()
+            difficulty_menu()
         
         if current_mode == None or current_mode == "PvC":
             if event.type == pygame.MOUSEBUTTONDOWN:
