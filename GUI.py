@@ -121,6 +121,26 @@ def skip_turn(board, x, y):
     
     return True
 
+def game_over(board):
+    for i in range(8):
+        for j in range(8):
+            if board[i][j] == 0 or board[i][j] == 3:
+                return False
+    
+    game_over_font = pygame.font.SysFont("microsoftsansserif", 100)
+    game_over_label = game_over_font.render("GAME OVER", 1, (255, 0, 0))
+    screen.blit(game_over_label, (125, 325))
+    
+    over = True
+    
+    while over:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+                                
+        pygame.display.update()
+
 screen.fill((255, 255, 255))
 running = True
 turn = 1
@@ -132,13 +152,14 @@ while running:
         # Closing the game
         if event.type == pygame.QUIT:
             running = False
-            
+        
         othello.check_open_moves(board, turn)
         draw_board(board)
-
-        if lastX != -1 and lastY != -1 and skip_turn(board, x, y):
-            turn = 2 if turn == 1 else 1
-            continue
+        
+        if not game_over(board):
+            if lastX != -1 and lastY != -1 and skip_turn(board, x, y):
+                turn = 2 if turn == 1 else 1
+                continue
 
         pos = pygame.mouse.get_pos()
         x = pos[0] // tile_size
