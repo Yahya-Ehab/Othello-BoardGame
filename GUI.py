@@ -351,7 +351,7 @@ while running:
                 # Changing turns
                 turn = 2 if turn == 1 else 1
 
-                print("score :", white_score, black_score)  # to test the score
+                print(f'Score: Black -> {black_score}, White -> {white_score}')
                 print(f'Black turn: {black_turns}, White turns: {white_turns}')
                 
     # Changed from .flip because it flipped the board
