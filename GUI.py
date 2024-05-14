@@ -125,18 +125,28 @@ def skip_turn(board, x, y):
     return True
 
 # This is to prevent the crashing of the program at the end, till we implement a proper menu and game over screen
-def game_over(board):
+def game_over(board, white_score, black_score):
     for i in range(8):
         for j in range(8):
             if board[i][j] == 0 or board[i][j] == 3:
                 return False
     
+    font = pygame.font.Font(None, 64)
     game_over_font = pygame.font.SysFont("microsoftsansserif", 100)
     game_over_label = game_over_font.render("GAME OVER", 1, (255, 0, 0))
+    text_rect = text.get_rect(center=(WINDOW_SIZE // 2, WINDOW_SIZE // 2))
+
     screen.blit(game_over_label, (125, 325))
+    screen.blit(text, text_rect)
+    
+    if black_score > white_score:
+        text = font.render("Black wins!", True, (255, 255, 255))
+    elif white_score > black_score:
+        text = font.render("White wins!", True, (255, 255, 255))
+    else:
+        text = font.render("It's a draw!", True, (255, 255, 255))
     
     over = True
-    
     while over:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -145,40 +155,6 @@ def game_over(board):
                                 
         pygame.display.update()
 
-# Function to draw the main menu
-def draw_menu():
-    screen.blit(background_image, (0, 0))
-    font = pygame.font.Font(None, 38)
-    pvp_text = font.render("Player vs Player", True, (255, 255, 255))
-    pvc_text = font.render("Player vs Computer", True,(255, 255, 255))
-    screen.blit(pvp_text, (400, 500))
-    screen.blit(pvc_text, (400, 600))
-
-
-# Function to draw the difficulty selection menu
-def draw_difficulty_menu():
-    screen.blit(background_image, (0, 0))
-    font = pygame.font.Font(None, 36)
-    easy_text = font.render("Easy", True, (255, 255, 255))
-    medium_text = font.render("Medium", True, (255, 255, 255))
-    hard_text = font.render("Hard", True, (255, 255, 255))
-    screen.blit(easy_text, (400, 500))
-    screen.blit(medium_text, (400, 600))
-    screen.blit(hard_text, (400, 700))
-
-
-def display_end_game_message(winner):
-    font = pygame.font.Font(None, 64)
-    if winner == 1:
-        text = font.render("Black wins!", True, (255, 255, 255))
-    elif winner == 2:
-        text = font.render("White wins!", True, (255, 255, 255))
-    else:
-        text = font.render("It's a draw!", True, (255, 255, 255))
-    text_rect = text.get_rect(center=(WINDOW_SIZE // 2, WINDOW_SIZE // 2))
-    screen.blit(text, text_rect)
-    pygame.display.flip()
-
 
 # Function to draw the main menu
 def draw_menu():
@@ -201,18 +177,6 @@ def draw_difficulty_menu():
     screen.blit(medium_text, (400, 600))
     screen.blit(hard_text, (400, 700))
 
-
-def display_end_game_message(winner):
-    font = pygame.font.Font(None, 64)
-    if winner == 1:
-        text = font.render("Black wins!", True, (255, 255, 255))
-    elif winner == 2:
-        text = font.render("White wins!", True, (255, 255, 255))
-    else:
-        text = font.render("It's a draw!", True, (255, 255, 255))
-    text_rect = text.get_rect(center=(WINDOW_SIZE // 2, WINDOW_SIZE // 2))
-    screen.blit(text, text_rect)
-    pygame.display.flip()
 
 # Main loop
 running = True
@@ -267,11 +231,12 @@ while running:
             othello.check_open_moves(board, turn)
             draw_board(board)
             
-            if not game_over(board):
+            if not game_over(board, black_score, white_score):
                 if lastX != -1 and lastY != -1 and skip_turn(board, x, y):
                     turn = 2 if turn == 1 else 1
                     continue
-
+            
+            # This is to prevent pressing on the button and putting a piece at the same time
             if first_play:
                 first_play = False
                 continue
@@ -289,20 +254,33 @@ while running:
                 elif turn == 2:
                     board[x][y] = 2
                 
+                # Last piece's position
                 lastX = x
                 lastY = y
                 
-                othello.update_pieces(board, turn, x, y, "", True)
                 move_sound.play()
+                
+                # Update pieces
+                othello.update_pieces(board, turn, x, y, "", True)
+                
+                # Update scores 
+                white_score, black_score = othello.update_score(board)
                 
                 # Changing turns
                 turn = 2 if turn == 1 else 1
 
 
         if current_mode == "PvC" and current_difficulty:
+            played = False
             othello.check_open_moves(board, turn)
             draw_board(board)
             
+            if not game_over(board, black_score, white_score):
+                if lastX != -1 and lastY != -1 and skip_turn(board, x, y):
+                    turn = 2 if turn == 1 else 1
+                    continue
+                
+            # This is to prevent pressing on the button and putting a piece at the same time
             if first_play:
                 first_play = False
                 continue
@@ -311,35 +289,38 @@ while running:
             x = pos[0] // tile_size
             y = pos[1] // tile_size
 
-            if board[x][y] == 3:
-                # Adding new pieces
-                if turn == 1:
+            if turn == 1:
+                if event.type == pygame.MOUSEBUTTONDOWN and board[x][y] == 3:
+                    # Adding new pieces
                     board[x][y] = 1
-                    turn = 2
-                elif turn == 2:
-                    if current_mode == "PvC":
-                        # If it's the computer's turn in PvC mode, let the computer make a move
-                        best_move, _ = ai.computerDifficulty(board, depth, 2)
-                        if best_move:
-                            x, y = best_move
-                            board[x][y] = 2
-                    else:
-                        board[x][y] = 2
-                    turn = 1
-                    # Update scores
-                white_score, black_score = othello.update_score(board)
+                    played = True
+                    
+            elif turn == 2:
+                # If it's the computer's turn in PvC mode, let the computer make a move
+                best_move, _ = ai.computerDifficulty(board, depth, 2)
+                if best_move:
+                    x, y = best_move
+                    board[x][y] = 2
+                
+                played = True
 
-                if black_score + white_score == 64:
-                    game_ended = True
-                    if black_score > white_score:
-                        display_end_game_message(1)
-                    elif white_score > black_score:
-                        display_end_game_message(2)
-                    else:
-                        display_end_game_message(0)
-
+            if played:
+                
+                # Last piece's position
+                lastX = x
+                lastY = y
+                
                 move_sound.play()
-                print(x, y)
+                
+                # Update pieces
+                othello.update_pieces(board, turn, x, y, "", True)
+                
+                # Update scores 
+                white_score, black_score = othello.update_score(board)
+                
+                # Changing turns
+                turn = 2 if turn == 1 else 1
+
                 print("score :", white_score, black_score)  # to test the score
                 
     # Changed from .flip because it flipped the board
