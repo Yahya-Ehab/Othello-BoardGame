@@ -126,26 +126,25 @@ def skip_turn(board, x, y):
 
 
 # This is to prevent the crashing of the program at the end, till we implement a proper menu and game over screen
-def game_over(board, white_score, black_score):
-    for i in range(8):
-        for j in range(8):
-            if board[i][j] == 0 or board[i][j] == 3:
-                return False
+def end_game(white_score, black_score):
     
-    font = pygame.font.Font(None, 64)
+    if white_score + black_score < 64:
+        return False
+    
+    winner_font = pygame.font.SysFont("microsoftsansserif", 64)
     game_over_font = pygame.font.SysFont("microsoftsansserif", 100)
-    game_over_label = game_over_font.render("GAME OVER", 1, (255, 0, 0))
-    text_rect = text.get_rect(center=(WINDOW_SIZE // 2, WINDOW_SIZE // 2))
-
-    screen.blit(game_over_label, (125, 325))
-    screen.blit(text, text_rect)
+    game_over = game_over_font.render("Game Over", 1, (230, 211, 0))
+    pygame.draw.rect(screen, (0,0,0), pygame.Rect(WINDOW_SIZE // 8, WINDOW_SIZE // 5, 600, 500))
     
     if black_score > white_score:
-        text = font.render("Black wins!", True, (255, 255, 255))
+        winner = winner_font.render("Black wins!", True, (255, 255, 255))
     elif white_score > black_score:
-        text = font.render("White wins!", True, (255, 255, 255))
+        winner = winner_font.render("White wins!", True, (255, 255, 255))
     else:
-        text = font.render("It's a draw!", True, (255, 255, 255))
+        winner = winner_font.render("It's a draw!", True, (255, 255, 255))
+    
+    screen.blit(game_over, (WINDOW_SIZE // 5.5, WINDOW_SIZE // 3))
+    screen.blit(winner, (WINDOW_SIZE // 3.3, WINDOW_SIZE // 1.8))
     
     over = True
     while over:
@@ -231,7 +230,7 @@ while running:
             othello.check_open_moves(board, turn)
             draw_board(board)
             
-            if not game_over(board, black_score, white_score):
+            if not end_game(black_score, white_score):
                 if lastX != -1 and lastY != -1 and skip_turn(board, x, y):
                     turn = 2 if turn == 1 else 1
                     continue
@@ -275,7 +274,7 @@ while running:
             othello.check_open_moves(board, turn)
             draw_board(board)
             
-            if not game_over(board, black_score, white_score):
+            if not end_game(black_score, white_score):
                 if lastX != -1 and lastY != -1 and skip_turn(board, x, y):
                     turn = 2 if turn == 1 else 1
                     continue
