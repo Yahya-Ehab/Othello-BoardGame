@@ -148,7 +148,7 @@ def end_game(black_score, white_score, black_turns, white_turns):
 
     
     # To check if we can't make anymore moves
-    if black and white and black_turns < 30 and white_turns < 30 and black_score + white_score < 64:
+    if black and white and black_turns < 31 and white_turns < 31 and black_score + white_score < 64:
         return False
     
     winner_font = pygame.font.SysFont("microsoftsansserif", 64)
