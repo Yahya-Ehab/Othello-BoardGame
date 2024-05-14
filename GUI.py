@@ -6,7 +6,7 @@ from src.AI import AI
 
 # TODO:
 # AI OVERWRITES PIECES SOMETIMES
-# WHITE OR BLACK MAY GET EATEN AND CRASH THE GAME
+# WHITE OR BLACK MAY GET EATEN AND CRASH THE GAME (FIXED)
 # AI SOMETIMES CHECKS OUT OF BOUNDS
 
 pygame.init()
@@ -134,14 +134,20 @@ def skip_turn(board, x, y):
 # This is to prevent the crashing of the program at the end, till we implement a proper menu and game over screen
 def end_game(white_score, black_score):
     
+    white = False 
+    black = False
+    
     # To check if no white or black pieces exist
-    # for i in range(8):
-    #     for j in range(8):
-    #         if board[i][j] != 1 or board[i][j] != 2:
-    #             return True
+    for i in range(8):
+        for j in range(8):
+            if board[i][j] == 1:
+                white = True
+            elif board[i][j] == 2:
+                black = True
 
+    
     # To check if we can't make anymore moves
-    if white_score + black_score < 64:
+    if white and black and white_score + black_score < 64:
         return False
     
     winner_font = pygame.font.SysFont("microsoftsansserif", 64)
