@@ -293,10 +293,10 @@ while running:
                     # Adding new pieces
                     board[x][y] = 1
                     played = True
-                    
+
             elif turn == 2:
                 # If it's the computer's turn in PvC mode, let the computer make a move
-                best_move, _ = ai.computerDifficulty(board, depth, 2)
+                best_move, _ = othello.computer_turn(board, depth, 64, -64, 1)
                 if best_move:
                     x, y = best_move
                     board[x][y] = 2
