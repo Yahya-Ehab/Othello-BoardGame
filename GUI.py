@@ -5,10 +5,10 @@ from src.AI import AI
 
 
 # TODO:
-# AI OVERWRITES PIECES SOMETIMES
-# WHITE OR BLACK MAY GET EATEN AND CRASH THE GAME (FIXED)
-# AI SOMETIMES CHECKS OUT OF BOUNDS
+# AI SOMETIMES CHECKS OUT OF BOUNDS (???)
+# AI OVERWRITES PIECES SOMETIMES (FIXED)
 # EACH PLAYER MUST HAVE 30 TURNS ONLY (DONE)
+# WHITE OR BLACK MAY GET EATEN AND CRASH THE GAME (FIXED)
 
 pygame.init()
 pygame.mixer.init()
@@ -117,12 +117,14 @@ def skip_turn(board, x, y):
             if board[i][j] == 3:
                 return False
 
+    # Black
     if board[x][y] == 1:
         screen.blit(paused_black_tile, (x * tile_size, y * tile_size))
         pygame.display.update()
         pygame.time.delay(2000)
         screen.blit(black_tile, (x * tile_size, y * tile_size))
-        
+    
+    # White
     elif board[x][y] == 2:
         screen.blit(paused_white_tile, (x * tile_size, y * tile_size))
         pygame.display.update()
@@ -176,7 +178,7 @@ def end_game(black_score, white_score, black_turns, white_turns):
         pygame.display.update()
 
 
-# Function to draw the main menu
+# Draw the main menu
 def main_menu():
     screen.blit(background_image, (0, 0))
     font = pygame.font.Font(None, 38)
@@ -186,7 +188,7 @@ def main_menu():
     screen.blit(pvc_text, (400, 600))
 
 
-# Function to draw the difficulty selection menu
+# Draw the difficulty selection menu
 def difficulty_menu():
     screen.blit(background_image, (0, 0))
     font = pygame.font.Font(None, 36)
@@ -225,18 +227,22 @@ while running:
         elif current_mode == "PvC" and current_difficulty is None:
             difficulty_menu()
         
+        # Main Menu
         if current_mode == None or current_mode == "PvC":
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 x = pos[0]
                 y = pos[1]
 
-                if current_mode is None:
+                # Select Game Mode
+                if current_mode is None:                    
                     # Check if the click was in the menu area
                     if 400 < pos[0] < 600 and 500 < pos[1] < 550:
                         current_mode = "PvP"
                     elif 400 < pos[0] < 600 < pos[1] < 650:
                         current_mode = "PvC"
+                        
+                # Select AI Difficulty
                 elif current_mode == "PvC" and current_difficulty is None:
                     # Check if the click was in the difficulty menu area
                     if 400 < pos[0] < 500 < pos[1] < 550:
@@ -249,11 +255,12 @@ while running:
                         current_difficulty = "Hard"
                         depth = 5
 
-
+        # Player Vs Player
         if current_mode == "PvP":
             othello.check_open_moves(board, turn)
             draw_board(board)
             
+            # Checking if game is over, or if turn needs skipping
             if not end_game(black_score, white_score, black_turns, white_turns):
                 if lastX != -1 and lastY != -1 and skip_turn(board, x, y):
                     turn = 2 if turn == 1 else 1
@@ -264,6 +271,7 @@ while running:
                 first_play = False
                 continue
 
+            # Getting mouse coordinates
             pos = pygame.mouse.get_pos()
             x = pos[0] // tile_size
             y = pos[1] // tile_size
@@ -271,7 +279,7 @@ while running:
             # If you press on an open tile
             if event.type == pygame.MOUSEBUTTONDOWN and board[x][y] == 3:
                 
-                # Update pieces on the grid
+                # Update turn and register move
                 if turn == 1:
                     board[x][y] = 1
                     black_turns += 1
@@ -283,6 +291,7 @@ while running:
                 lastX = x
                 lastY = y
                 
+                # Piece movement sound
                 move_sound.play()
                 
                 # Update pieces
@@ -294,15 +303,20 @@ while running:
                 # Changing turns
                 turn = 2 if turn == 1 else 1
                 
+                # Scoreboard
                 print(f'Score: Black -> {black_score}, White -> {white_score}')
                 print(f'Black turn: {black_turns}, White turns: {white_turns}')
 
 
+        # Player Vs AI
         if current_mode == "PvC" and current_difficulty:
+            
+            # Reset play condition
             played = False
             othello.check_open_moves(board, turn)
             draw_board(board)
 
+            # Checking if game is over, or if turn needs skipping
             if not end_game(black_score, white_score, black_turns, white_turns):
                 if lastX != -1 and lastY != -1 and skip_turn(board, x, y):
                     turn = 2 if turn == 1 else 1
@@ -313,6 +327,7 @@ while running:
                 first_play = False
                 continue
 
+            # Player's Turn
             if turn == 1:
                 pos = pygame.mouse.get_pos()
                 x = pos[0] // tile_size
@@ -324,9 +339,12 @@ while running:
                     black_turns += 1
                     played = True
 
+            # AI's Turn
             elif turn == 2:
-                pygame.time.delay(1000)  # Delay
-                best_move, _ = othello.computer_turn(board, depth, -64, 64, 2)
+                pygame.time.delay(500)  # Delay to give time for the player to see the AI move
+                best_move, _ = othello.computer_turn(board, depth, -64, 64, 2) # Getting the current best move
+                
+                # If it isn't none, then we register that move and change the play condition
                 if best_move:
                     x, y = best_move
                     board[x][y] = 2
@@ -342,6 +360,7 @@ while running:
                 lastX = x
                 lastY = y
                 
+                # Piece movement sound
                 move_sound.play()
                 
                 # Update pieces
@@ -353,6 +372,7 @@ while running:
                 # Changing turns
                 turn = 2 if turn == 1 else 1
 
+                # Scoreboard
                 print(f'Score: Black -> {black_score}, White -> {white_score}')
                 print(f'Black turn: {black_turns}, White turns: {white_turns}')
                 
