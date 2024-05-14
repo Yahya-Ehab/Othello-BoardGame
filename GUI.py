@@ -99,7 +99,6 @@ def draw_board(boardc):
 
 
 # This checks if there are available moves for the current player, otherwise it skips their turn
-# FIXME: this crashes the game at the end because there are no moves to be made, so we need an end screen
 def skip_turn(board, x, y):
     
     for i in range(8):
@@ -121,6 +120,7 @@ def skip_turn(board, x, y):
     
     return True
 
+# This is to prevent the crashing of the program at the end, till we implement a proper menu and game over screen
 def game_over(board):
     for i in range(8):
         for j in range(8):
