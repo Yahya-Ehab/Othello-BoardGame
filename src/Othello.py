@@ -101,9 +101,9 @@ class Othello:
 
     # Updating scoreboard by counting pieces
     def update_score(self, grid):
-        white_score = sum(row.count(1) for row in grid)
-        black_score = sum(row.count(2) for row in grid)
-        return white_score, black_score
+        black_score = sum(row.count(1) for row in grid)
+        white_score = sum(row.count(2) for row in grid)
+        return black_score, white_score
 
 
     # Simple evaluation function, just returns the difference between black and white scores

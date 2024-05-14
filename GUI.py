@@ -148,7 +148,7 @@ def end_game(black_score, white_score, black_turns, white_turns):
 
     
     # To check if we can't make anymore moves
-    if black and white and black_turns < 31 and white_turns < 31 and black_score + white_score < 64:
+    if black and white and black_turns < 30 and white_turns < 30 and black_score + white_score < 64:
         return False
     
     winner_font = pygame.font.SysFont("microsoftsansserif", 64)
@@ -203,8 +203,8 @@ def difficulty_menu():
 turn = 1
 depth = None
 running = True
-white_turns = 1
-black_turns = 1
+white_turns = 0
+black_turns = 0
 black_score = 0
 white_score = 0
 first_play = True
@@ -289,11 +289,12 @@ while running:
                 othello.update_pieces(board, turn, x, y, "", True)
                 
                 # Update scores 
-                white_score, black_score = othello.update_score(board)
+                black_score, white_score = othello.update_score(board)
                 
                 # Changing turns
                 turn = 2 if turn == 1 else 1
                 
+                print(f'Score: Black -> {black_score}, White -> {white_score}')
                 print(f'Black turn: {black_turns}, White turns: {white_turns}')
 
 
@@ -345,7 +346,7 @@ while running:
                 othello.update_pieces(board, turn, x, y, "", True)
                 
                 # Update scores 
-                white_score, black_score = othello.update_score(board)
+                black_score, white_score = othello.update_score(board)
                 
                 # Changing turns
                 turn = 2 if turn == 1 else 1
