@@ -122,6 +122,7 @@ class Othello:
                 alpha = max(alpha, max_val)
                 if beta <= alpha:
                     break  # Beta cut-off
+
             return max_val
 
         def min_value(grid, depth, alpha, beta):

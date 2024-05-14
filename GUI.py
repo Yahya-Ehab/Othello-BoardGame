@@ -217,10 +217,10 @@ while running:
                     # Check if the click was in the difficulty menu area
                     if 400 < pos[0] < 500 < pos[1] < 550:
                         current_difficulty = "Easy"
-                        depth = 3
+                        depth = 1
                     elif 400 < pos[0] < 550 and 600 < pos[1] < 650:
                         current_difficulty = "Medium"
-                        depth = 4
+                        depth = 3
                     elif 400 < pos[0] < 500 and 700 < pos[1] < 750:
                         current_difficulty = "Hard"
                         depth = 5
