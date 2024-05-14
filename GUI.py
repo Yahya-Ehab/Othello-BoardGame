@@ -8,6 +8,7 @@ from src.AI import AI
 # AI OVERWRITES PIECES SOMETIMES
 # WHITE OR BLACK MAY GET EATEN AND CRASH THE GAME (FIXED)
 # AI SOMETIMES CHECKS OUT OF BOUNDS
+# EACH PLAYER MUST HAVE 30 TURNS ONLY (DONE)
 
 pygame.init()
 pygame.mixer.init()
@@ -147,7 +148,7 @@ def end_game(white_score, black_score):
 
     
     # To check if we can't make anymore moves
-    if white and black and white_score + black_score < 64:
+    if white and black and white_score < 31 and black_score < 31 and white_score + black_score < 64:
         return False
     
     winner_font = pygame.font.SysFont("microsoftsansserif", 64)
@@ -171,7 +172,7 @@ def end_game(white_score, black_score):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-                                
+
         pygame.display.update()
 
 
@@ -197,9 +198,13 @@ def difficulty_menu():
     screen.blit(hard_text, (400, 700))
 
 
+
+# TODO: REMEMBER TO RESET THESE EVERY NEW GAME
 turn = 1
 depth = None
 running = True
+white_turns = 1
+black_turns = 1
 black_score = 0
 white_score = 0
 first_play = True
@@ -249,7 +254,7 @@ while running:
             othello.check_open_moves(board, turn)
             draw_board(board)
             
-            if not end_game(black_score, white_score):
+            if not end_game(black_score, white_score, white_turns, black_turns):
                 if lastX != -1 and lastY != -1 and skip_turn(board, x, y):
                     turn = 2 if turn == 1 else 1
                     continue
@@ -269,8 +274,10 @@ while running:
                 # Update pieces on the grid
                 if turn == 1:
                     board[x][y] = 1
+                    black_turns += 1
                 elif turn == 2:
                     board[x][y] = 2
+                    white_turns += 1
                 
                 # Last piece's position
                 lastX = x
@@ -286,6 +293,9 @@ while running:
                 
                 # Changing turns
                 turn = 2 if turn == 1 else 1
+                
+                print(f'White turns: {white_turns}, Black turns: {black_turns}')
+
 
         if current_mode == "PvC" and current_difficulty:
             played = False
@@ -306,9 +316,11 @@ while running:
                 pos = pygame.mouse.get_pos()
                 x = pos[0] // tile_size
                 y = pos[1] // tile_size
+                
+                # Update pieces on the grid
                 if event.type == pygame.MOUSEBUTTONDOWN and board[x][y] == 3:
-                    # Adding new pieces
                     board[x][y] = 1
+                    black_turns += 1
                     played = True
 
             elif turn == 2:
@@ -317,6 +329,7 @@ while running:
                 if best_move:
                     x, y = best_move
                     board[x][y] = 2
+                    white_turns += 1
 
                 played = True
 
@@ -338,6 +351,7 @@ while running:
                 turn = 2 if turn == 1 else 1
 
                 print("score :", white_score, black_score)  # to test the score
+                print(f'White turns: {white_turns}, Black turns: {black_turns}')
                 
     # Changed from .flip because it flipped the board
     pygame.display.update()
