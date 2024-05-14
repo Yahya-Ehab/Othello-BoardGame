@@ -3,6 +3,12 @@ from src.Board import Board
 from src.Othello import Othello
 from src.AI import AI
 
+
+# TODO:
+# AI OVERWRITES PIECES SOMETIMES
+# WHITE OR BLACK MAY GET EATEN AND CRASH THE GAME
+# AI SOMETIMES CHECKS OUT OF BOUNDS
+
 pygame.init()
 pygame.mixer.init()
 
@@ -129,10 +135,10 @@ def skip_turn(board, x, y):
 def end_game(white_score, black_score):
     
     # To check if no white or black pieces exist
-    for i in range(8):
-        for j in range(8):
-            if board[i][j] != 1 or board[i][j] != 2:
-                return True
+    # for i in range(8):
+    #     for j in range(8):
+    #         if board[i][j] != 1 or board[i][j] != 2:
+    #             return True
 
     # To check if we can't make anymore moves
     if white_score + black_score < 64:
