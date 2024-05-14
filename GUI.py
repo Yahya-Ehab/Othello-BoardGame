@@ -3,13 +3,6 @@ from src.Board import Board
 from src.Othello import Othello
 from src.AI import AI
 
-
-# TODO:
-# AI SOMETIMES CHECKS OUT OF BOUNDS (???)
-# AI OVERWRITES PIECES SOMETIMES (FIXED)
-# EACH PLAYER MUST HAVE 30 TURNS ONLY (DONE)
-# WHITE OR BLACK MAY GET EATEN AND CRASH THE GAME (FIXED)
-
 pygame.init()
 pygame.mixer.init()
 
@@ -56,16 +49,13 @@ current_white_tile = pygame.transform.scale(current_white_tile_unscaled, (tile_s
 hover_current_black_tile = pygame.transform.scale(hover_current_black_unscaled, (tile_size, tile_size))
 hover_current_white_tile = pygame.transform.scale(hover_current_white_unscaled, (tile_size, tile_size))
 
-
+# Initializing game elements
 board = Board().board
 othello = Othello()
 ai = AI()
 
 # Piece sound
 move_sound = pygame.mixer.Sound("Sounds/Piece_Sound.wav")
-
-lastX = -1
-lastY = -1
 
 # NOTE: the (x, y) points are reversed in pygame, where (x) is columns and (y) is rows
 # x increases going right
@@ -111,7 +101,6 @@ def draw_board(grid):
 
 # This checks if there are available moves for the current player, otherwise it skips their turn
 def skip_turn(board, x, y):
-    
     for i in range(8):
         for j in range(8):
             if board[i][j] == 3:
@@ -133,10 +122,37 @@ def skip_turn(board, x, y):
     
     return True
 
+# Resets game or quits to main menu
+def reset_game(mode):
+    global board, turn, lastX, lastY, depth, white_turns, black_turns, white_score, black_score, first_play, current_mode, current_difficulty
+    
+    if mode == "replay":
+        board = Board().board
+        turn = 1
+        lastX = -1
+        lastY = -1
+        white_turns = 0
+        black_turns = 0
+        black_score = 0
+        white_score = 0
+        first_play = True
+        
+    elif mode == "quit":
+        board = Board().board
+        turn = 1
+        lastX = -1
+        lastY = -1
+        depth = None
+        white_turns = 0
+        black_turns = 0
+        black_score = 0
+        white_score = 0
+        first_play = True
+        current_mode = None
+        current_difficulty = None
 
 # This is to prevent the crashing of the program at the end, till we implement a proper menu and game over screen
 def end_game(black_score, white_score, black_turns, white_turns):
-    
     white = False 
     black = False
     
@@ -148,16 +164,22 @@ def end_game(black_score, white_score, black_turns, white_turns):
             elif board[i][j] == 2:
                 black = True
 
-    
     # To check if we can't make anymore moves
     if black and white and black_turns < 31 and white_turns < 31 and black_score + white_score < 64:
         return False
-    
+
+    # Fonts    
     winner_font = pygame.font.SysFont("microsoftsansserif", 64)
     game_over_font = pygame.font.SysFont("microsoftsansserif", 100)
+    end_font = pygame.font.SysFont("microsoftsansserif", 48)
+
+    # Text
     game_over = game_over_font.render("Game Over", 1, (230, 211, 0))
+    replay_game = end_font.render("Replay", True, (145, 145, 145))
+    end_game = end_font.render("Quit", True, (145, 145, 145))
     pygame.draw.rect(screen, (0,0,0), pygame.Rect(WINDOW_SIZE // 8, WINDOW_SIZE // 5, 600, 500))
     
+    # Checks who won
     if black_score > white_score:
         winner = winner_font.render("Black wins!", True, (255, 255, 255))
     elif white_score > black_score:
@@ -165,16 +187,37 @@ def end_game(black_score, white_score, black_turns, white_turns):
     else:
         winner = winner_font.render("It's a draw!", True, (255, 255, 255))
     
-    screen.blit(game_over, (WINDOW_SIZE // 5.5, WINDOW_SIZE // 3))
-    screen.blit(winner, (WINDOW_SIZE // 3.3, WINDOW_SIZE // 1.8))
+    # Presents game over menu
+    screen.blit(game_over, (WINDOW_SIZE // 5.5, WINDOW_SIZE // 3.7))
+    screen.blit(winner, (WINDOW_SIZE // 3.2, WINDOW_SIZE // 2.1))
+    screen.blit(replay_game, (WINDOW_SIZE // 3.6, WINDOW_SIZE // 1.6))
+    screen.blit(end_game, (WINDOW_SIZE // 1.7, WINDOW_SIZE // 1.6))
     
+    # Waits for user to replay, quit or close game
     over = True
     while over:
         for event in pygame.event.get():
+            # Closing the game
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                x = pos[0]
+                y = pos[1]
+                
+                # Replay Game
+                if 210 < x < 380 and 500 < y < 555:
+                    # Resets all values and keeps current mode and difficulty
+                    reset_game("replay")
+                    return
+                
+                # Quit Game
+                elif 465 < x < 565 and 500 < y < 555:
+                    # Resets all values, current mode and difficulty
+                    reset_game("quit")
+                    return
         pygame.display.update()
 
 
@@ -200,9 +243,10 @@ def difficulty_menu():
     screen.blit(hard_text, (400, 700))
 
 
-
-# TODO: REMEMBER TO RESET THESE EVERY NEW GAME
+# Game variables, reset on every new game
 turn = 1
+lastX = -1
+lastY = -1
 depth = None
 running = True
 white_turns = 0
@@ -260,16 +304,16 @@ while running:
             othello.check_open_moves(board, turn)
             draw_board(board)
             
+            # This is to prevent pressing on the button and putting a piece at the same time
+            if first_play:
+                first_play = False
+                continue
+            
             # Checking if game is over, or if turn needs skipping
             if not end_game(black_score, white_score, black_turns, white_turns):
                 if lastX != -1 and lastY != -1 and skip_turn(board, x, y):
                     turn = 2 if turn == 1 else 1
                     continue
-            
-            # This is to prevent pressing on the button and putting a piece at the same time
-            if first_play:
-                first_play = False
-                continue
 
             # Getting mouse coordinates
             pos = pygame.mouse.get_pos()
@@ -313,19 +357,20 @@ while running:
             
             # Reset play condition
             played = False
+            
             othello.check_open_moves(board, turn)
             draw_board(board)
-
+            
+            # This is to prevent pressing on the button and putting a piece at the same time
+            if first_play:
+                first_play = False
+                continue
+            
             # Checking if game is over, or if turn needs skipping
             if not end_game(black_score, white_score, black_turns, white_turns):
                 if lastX != -1 and lastY != -1 and skip_turn(board, x, y):
                     turn = 2 if turn == 1 else 1
                     continue
-
-            # This is to prevent pressing on the button and putting a piece at the same time
-            if first_play:
-                first_play = False
-                continue
 
             # Player's Turn
             if turn == 1:
@@ -351,11 +396,10 @@ while running:
                     white_turns += 1
                     played = True
                 else:
-                    print("NO BEST MOVE\n\n\n")
+                    print("NO BEST MOVE\n\n")
 
 
             if played:
-                
                 # Last piece's position
                 lastX = x
                 lastY = y
