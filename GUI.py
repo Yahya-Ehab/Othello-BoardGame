@@ -342,7 +342,7 @@ while running:
             # AI's Turn
             elif turn == 2:
                 pygame.time.delay(500)  # Delay to give time for the player to see the AI move
-                best_move, _ = othello.computer_turn(board, depth, -64, 64, 2) # Getting the current best move
+                best_move, _ = ai.computer_turn(board, depth, -64, 64, 2) # Getting the current best move
                 
                 # If it isn't none, then we register that move and change the play condition
                 if best_move:

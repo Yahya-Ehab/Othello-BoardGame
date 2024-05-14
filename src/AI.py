@@ -1,90 +1,67 @@
-import copy
+from src.Othello import Othello
 
+othello = Othello()
 class AI:
     def __init__(self) -> None:
         pass
     
-    # AI FUNCTIONS
-    def get_best_move(grid, depth, alpha, beta, player):
-        pass
-    
-    def computerDifficulty(self, grid, depth, player):
-        def minimax(grid, depth, alpha, beta, maximizing_player):
-            if depth == 0:
-                return None, self.evaluateBoard(grid, player)
+    def computer_turn(self, grid, depth, alpha, beta, player):
+        def max_value(grid, depth, alpha, beta):
+            if depth == 0 or len(self.get_valid_moves(grid)) == 0:
+                return othello.evaluate_board(grid)
 
-            valid_moves = self.findAvailMoves(grid, player)
-            if maximizing_player:
-                max_score = float('-inf')
-                best_move = None
-                for move in valid_moves:
-                    x, y = move
-                    new_grid = copy.deepcopy(grid)
-                    self.makeMove(new_grid, x, y, player)
-                    _, score = minimax(new_grid, depth - 1, alpha, beta, False)
-                    if score > max_score:
-                        max_score = score
-                        best_move = move
-                    alpha = max(alpha, max_score)
-                    if beta <= alpha:
-                        break
-                return best_move, max_score
-            else:
-                min_score = float('inf')
-                best_move = None
-                for move in valid_moves:
-                    x, y = move
-                    new_grid = copy.deepcopy(grid)
-                    self.makeMove(new_grid, x, y, -player)
-                    _, score = minimax(new_grid, depth - 1, alpha, beta, True)
-                    if score < min_score:
-                        min_score = score
-                        best_move = move
-                    beta = min(beta, min_score)
-                    if beta <= alpha:
-                        break
-                return best_move, min_score
+            max_val = -64
+            for move in self.get_valid_moves(grid):
+                new_grid = self.simulate_move(grid, move[0], move[1], player)
+                val = min_value(new_grid, depth - 1, alpha, beta)
+                max_val = max(max_val, val)
+                alpha = max(alpha, max_val)
+                if beta <= alpha:
+                    break  # Beta cut-off
 
-        return minimax(grid, depth, float('-inf'), float('inf'), True)
+            return max_val
 
+        def min_value(grid, depth, alpha, beta):
+            if depth == 0 or len(self.get_valid_moves(grid)) == 0:
+                return othello.evaluate_board(grid)
 
-    def findAvailMoves(self, grid, player):
-        moves = []
+            min_val = 64
+            opponent = 1 if player == 2 else 2
+            for move in self.get_valid_moves(grid):
+                new_grid = self.simulate_move(grid, move[0], move[1], opponent)
+                val = max_value(new_grid, depth - 1, alpha, beta)
+                min_val = min(min_val, val)
+                beta = min(beta, min_val)
+                if beta <= alpha:
+                    break  # Alpha cut-off
+            return min_val
+
+        best_move = None
+        max_val = -64
+        for move in self.get_valid_moves(grid):
+            new_grid = self.simulate_move(grid, move[0], move[1], player)
+            val = min_value(new_grid, depth - 1, alpha, beta)
+            if val > max_val:
+                max_val = val
+                best_move = move
+                alpha = max(alpha, max_val)
+                if beta <= alpha:
+                    break  # Beta cut-off
+                
+        return best_move, max_val
+
+    def get_valid_moves(self, grid):
+        valid_moves = []
         for i in range(8):
             for j in range(8):
-                if grid[i][j] == 0:
-                    if self.isValidMove(grid, i, j, player):
-                        moves.append((i, j))
-        return moves
+                if grid[i][j] == 3:
+                    valid_moves.append((i, j))
+        return valid_moves
 
-    def isValidMove(self, grid, x, y, player):
-        if grid[x][y] != 0:
-            return False
-        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
-            tx, ty = x + dx, y + dy
-            if 0 <= tx < 8 and 0 <= ty < 8 and grid[tx][ty] == -player:
-                while 0 <= tx < 8 and 0 <= ty < 8:
-                    if grid[tx][ty] == 0:
-                        break
-                    if grid[tx][ty] == player:
-                        return True
-                    tx += dx
-                    ty += dy
-        return False
+    def simulate_move(self, grid, x, y, player):
+        new_grid = [row[:] for row in grid]
+        new_grid[x][y] = player
+        othello.update_pieces(new_grid, player, x, y, "", True)
+        return new_grid
 
-    def makeMove(self, grid, x, y, player):
-        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
-            tx, ty = x + dx, y + dy
-            if 0 <= tx < 8 and 0 <= ty < 8 and grid[tx][ty] == -player:
-                to_flip = []
-                while 0 <= tx < 8 and 0 <= ty < 8:
-                    if grid[tx][ty] == 0:
-                        break
-                    if grid[tx][ty] == player:
-                        for px, py in to_flip:
-                            grid[px][py] = player
-                        break
-                    to_flip.append((tx, ty))
-                    tx += dx
-                    ty += dy
-        grid[x][y] = player
+    
