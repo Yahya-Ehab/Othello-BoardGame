@@ -30,7 +30,7 @@ class Othello:
         if board[x][y] == reverse_turn:
             found = True
 
-        # Otherwise if its an open tile, we return, because we can do nothing 
+        # Otherwise if its an open tile, we return, because we can do nothing or if we find our tile again after find the opposite
         if board[x][y] == 3 or (board[x][y] == turn and found):
             return
 
