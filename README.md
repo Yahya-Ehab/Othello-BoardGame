@@ -1,16 +1,24 @@
 # Othello
+
 Othello is a strategy board game played on an 8x8 board with 64 discs. Each disc is black on one side and white on the other. The goal is to have the majority of discs showing your color at the end of the game.
 
-![Othello Board](Extras\Main Menu.png)
+<img src="Extras/Main%20Menu.png" alt="Othello Board" width="400">
 
 ## Objective
 - The player with the most discs of their color facing up at the end of the game wins.
 
+## Features
+- **Player vs Player (PvP)**: Challenge a friend and see who can outsmart the other.
+- **Player vs Computer (PvC)**: Test your skills against an AI with three levels of difficulty:
+  - Easy
+  - Medium
+  - Hard
+
 ## Rules of Play
 
-1.**Game Setup**
-   - The board starts with four discs placed in the center.
-     ![Game Start](Extras\Game Start.png)
+1. **Game Setup**
+   - The board starts with four discs placed in the center. <br>
+     <img src="Extras/Game%20Start.png" alt="Game Start" width="400">
    
 2. **Players and Turns**:
    - The game is played between two players. One player uses black discs and the other uses white discs.
@@ -32,8 +40,8 @@ Othello is a strategy board game played on an 8x8 board with 64 discs. Each disc
 
 6. **End of the Game**:
    - The game ends when neither player can make a valid move or the board is full.
-   - Count the discs to determine the winner. The player with the most discs of their color wins.
-     ![Game End](Extras\Game Over.png)
+   - Count the discs to determine the winner. The player with the most discs of their color wins. <br>
+     <img src="Extras/Game%20Over.png" alt="Game End" width="400">
 
 ## Additional Notes
 - If the game ends in a tie (both players have the same number of discs), the game is a draw.
