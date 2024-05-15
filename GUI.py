@@ -8,12 +8,13 @@ pygame.mixer.init()
 
 # Set up the window
 WINDOW_SIZE = 800
+icon_image = pygame.image.load("Images/Icon.png")
+pygame.display.set_icon(icon_image)
 screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE))
 pygame.display.set_caption("Othello")
 
-background_image = pygame.image.load("Images/bg.jpeg").convert()
-# background_image = pygame.transform.scale(background_image, (800, 800))
 
+background_image = pygame.image.load("Images/bg.jpeg").convert()
 
 # Load tile sprites
 empty_tile_unscaled = pygame.image.load("Images/Tile (Empty).png")
