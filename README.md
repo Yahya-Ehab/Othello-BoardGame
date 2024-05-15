@@ -47,4 +47,4 @@ Othello is a strategy board game played on an 8x8 board with 64 discs. Each disc
 - If the game ends in a tie (both players have the same number of discs), the game is a draw.
 - Strategic placement and flipping can change the game's outcome dramatically, making every move critical.
 
-Enjoy playing Othello!
+### Enjoy playing Othello!
