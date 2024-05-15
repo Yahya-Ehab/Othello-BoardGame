@@ -109,5 +109,4 @@ class Othello:
     # Simple evaluation function, just returns the difference between black and white scores
     def evaluate_board(self, grid):
         black_score, white_score = self.update_score(grid)
-        return black_score - white_score
-    
+        return white_score - black_score
