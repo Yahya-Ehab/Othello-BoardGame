@@ -125,15 +125,13 @@ def skip_turn(board, x, y):
 
 # Resets game or quits to main menu
 def reset_game(mode):
-    global board, turn, lastX, lastY, depth, white_turns, black_turns, white_score, black_score, first_play, current_mode, current_difficulty
+    global board, turn, lastX, lastY, depth, white_score, black_score, first_play, current_mode, current_difficulty
     
     if mode == "replay":
         board = Board().board
         turn = 1
         lastX = -1
         lastY = -1
-        white_turns = 0
-        black_turns = 0
         black_score = 0
         white_score = 0
         first_play = True
@@ -144,8 +142,6 @@ def reset_game(mode):
         lastX = -1
         lastY = -1
         depth = None
-        white_turns = 0
-        black_turns = 0
         black_score = 0
         white_score = 0
         first_play = True
@@ -153,7 +149,7 @@ def reset_game(mode):
         current_difficulty = None
 
 # This is to prevent the crashing of the program at the end, till we implement a proper menu and game over screen
-def end_game(black_score, white_score, black_turns, white_turns):
+def end_game(black_score, white_score):
     white = False 
     black = False
     
@@ -166,7 +162,7 @@ def end_game(black_score, white_score, black_turns, white_turns):
                 black = True
 
     # To check if we can't make anymore moves
-    if black and white and black_turns < 31 and white_turns < 31 and black_score + white_score < 64:
+    if black and white and black_score + white_score < 64:
         return False
 
     # Fonts    
@@ -250,8 +246,6 @@ lastX = -1
 lastY = -1
 depth = None
 running = True
-white_turns = 0
-black_turns = 0
 black_score = 0
 white_score = 0
 first_play = True
@@ -311,7 +305,7 @@ while running:
                 continue
             
             # Checking if game is over, or if turn needs skipping
-            if not end_game(black_score, white_score, black_turns, white_turns):
+            if not end_game(black_score, white_score):
                 if lastX != -1 and lastY != -1 and skip_turn(board, x, y):
                     turn = 2 if turn == 1 else 1
                     continue
@@ -327,10 +321,8 @@ while running:
                 # Update turn and register move
                 if turn == 1:
                     board[x][y] = 1
-                    black_turns += 1
                 elif turn == 2:
                     board[x][y] = 2
-                    white_turns += 1
                 
                 # Last piece's position
                 lastX = x
@@ -349,8 +341,7 @@ while running:
                 turn = 2 if turn == 1 else 1
                 
                 # Scoreboard
-                print(f'Score: Black -> {black_score}, White -> {white_score}')
-                print(f'Black turn: {black_turns}, White turns: {white_turns}')
+                print(f'Score: Black -> {black_score}, White -> {white_score}\n')
 
 
         # Player Vs AI
@@ -368,7 +359,7 @@ while running:
                 continue
             
             # Checking if game is over, or if turn needs skipping
-            if not end_game(black_score, white_score, black_turns, white_turns):
+            if not end_game(black_score, white_score):
                 if lastX != -1 and lastY != -1 and skip_turn(board, x, y):
                     turn = 2 if turn == 1 else 1
                     continue
@@ -382,7 +373,6 @@ while running:
                 # Update pieces on the grid
                 if event.type == pygame.MOUSEBUTTONDOWN and board[x][y] == 3:
                     board[x][y] = 1
-                    black_turns += 1
                     played = True
 
             # AI's Turn
@@ -394,7 +384,6 @@ while running:
                 if best_move:
                     x, y = best_move
                     board[x][y] = 2
-                    white_turns += 1
                     played = True
                 else:
                     print("NO BEST MOVE\n\n")
@@ -418,8 +407,7 @@ while running:
                 turn = 2 if turn == 1 else 1
 
                 # Scoreboard
-                print(f'Score: Black -> {black_score}, White -> {white_score}')
-                print(f'Black turn: {black_turns}, White turns: {white_turns}')
+                print(f'Score: Black -> {black_score}, White -> {white_score}\n')
                 
     # Changed from .flip because it flipped the board
     pygame.display.update()
